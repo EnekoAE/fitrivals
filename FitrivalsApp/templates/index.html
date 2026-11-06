@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>FitRivals</title>
+</head>
+<body>
+    <h1>Bienvenido a FitRivals</h1>
+    <p>Gimnasio y retos fitness entre amigos.</p>
+
+    <ul>
+        <li><a href="{% url 'lista_usuarios' %}">Usuarios</a>: {{ num_usuarios }}</li>
+        <li>Ejercicios: {{ num_ejercicios }}</li>
+        <li>Entrenamientos: {{ num_entrenamientos }}</li>
+        <li>Retos: {{ num_retos }}</li>
+    </ul>
+</body>
+</html>
