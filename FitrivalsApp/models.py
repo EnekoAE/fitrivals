@@ -45,6 +45,17 @@ class Entrenamiento(models.Model):
 
     def __str__(self):
         return f"Entrenamiento de {self.usuario.nombre} - {self.fecha}"
+    
+class Reto(models.Model):
+    titulo = models.CharField(max_length=100)
+    ejercicio = models.ForeignKey(Ejercicio, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='retos')
+    puntuacion = models.IntegerField(default=10)
+    completado = models.BooleanField(default=False)
+    fecha_creacion = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.titulo} - {self.usuario.nombre}"
 
 
 class EntrenamientoEjercicio(models.Model):
