@@ -50,3 +50,11 @@ def detalle_ejercicio(request, pk):
         'ejercicio': ejercicio,
         'entrenamientos': entrenamientos,
     })
+
+def lista_retos(request):
+    retos = Reto.objects.select_related('usuario', 'ejercicio').order_by('-fecha_creacion')
+    return render(request, 'retos/lista.html', {'retos': retos})
+
+def detalle_reto(request, pk):
+    reto = get_object_or_404(Reto, pk=pk)
+    return render(request, 'retos/detalle.html', {'reto': reto})

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Retos - FitRivals</title>
+</head>
+<body>
+    <a href="{% url 'index' %}">← Inicio</a>
+    <h1>Retos</h1>
+    <ul>
+        {% for r in retos %}
+        <li>
+            <a href="{% url 'detalle_reto' r.pk %}">{{ r.titulo }}</a>
+            — {{ r.usuario.nombre }} ({{ r.puntuacion }} pts){% if r.completado %} ✔{% endif %}
+        </li>
+        {% empty %}
+        <li>No hay retos.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

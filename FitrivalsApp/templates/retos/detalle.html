@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ reto.titulo }} - FitRivals</title>
+</head>
+<body>
+    <a href="{% url 'lista_retos' %}">← Retos</a>
+    <h1>{{ reto.titulo }}</h1>
+    <p>Usuario: <a href="{% url 'detalle_usuario' reto.usuario.pk %}">{{ reto.usuario.nombre }}</a></p>
+    <p>Ejercicio: <a href="{% url 'detalle_ejercicio' reto.ejercicio.pk %}">{{ reto.ejercicio.nombre }}</a></p>
+    <p>Puntuación: {{ reto.puntuacion }} pts</p>
+    <p>Completado: {{ reto.completado|yesno:"Sí,No" }}</p>
+    <p>Creado el: {{ reto.fecha_creacion|date:"d/m/Y" }}</p>
+</body>
+</html>
