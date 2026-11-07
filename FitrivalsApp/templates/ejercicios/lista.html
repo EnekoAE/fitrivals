@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><title>Lista de Ejercicios</title></head>
+<body>
+    <h1>Catálogo de Ejercicios</h1>
+    <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
+    <ul>
+        {% for ejercicio in ejercicios %}
+            <li>
+                <a href="{% url 'detalle_ejercicio' ejercicio.pk %}">{{ ejercicio.nombre }}</a> 
+                ({{ ejercicio.grupo_muscular }} - {{ ejercicio.dificultad }})
+            </li>
+        {% empty %}
+            <li>No hay ejercicios registrados.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

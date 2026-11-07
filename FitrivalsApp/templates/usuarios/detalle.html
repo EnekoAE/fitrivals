@@ -1,32 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ usuario.nombre }} - FitRivals</title>
-</head>
+<head><title>Detalle de Usuario</title></head>
 <body>
-    <a href="{% url 'lista_usuarios' %}">← Usuarios</a>
     <h1>{{ usuario.nombre }}</h1>
-    <p>Email: {{ usuario.email }}</p>
-    <p>Puntos: {{ usuario.puntos }}</p>
-    <p>Alta: {{ usuario.fecha_alta|date:"d/m/Y" }}</p>
+    <p><strong>Email:</strong> {{ usuario.email }}</p>
+    <p><strong>Fecha de Alta:</strong> {{ usuario.fecha_alta }}</p>
+    <p><strong>Puntos de Gamificación:</strong> {{ usuario.puntos }} pts</p>
 
-    <h2>Entrenamientos</h2>
+    <h3>Historial de Entrenamientos</h3>
     <ul>
-        {% for e in entrenamientos %}
-        <li>{{ e.fecha|date:"d/m/Y" }} — {{ e.duracion_minutos }} min</li>
+        {% for entrenamiento in usuario.entrenamientos.all %}
+            <li>
+                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}">
+                    Entrenamiento del {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)
+                </a>
+            </li>
         {% empty %}
-        <li>Sin entrenamientos.</li>
+            <li>Este usuario aún no tiene entrenamientos registrados.</li>
         {% endfor %}
     </ul>
 
-    <h2>Retos</h2>
-    <ul>
-        {% for r in retos %}
-        <li>{{ r.titulo }} ({{ r.puntuacion }} pts){% if r.completado %} ✔{% endif %}</li>
-        {% empty %}
-        <li>Sin retos.</li>
-        {% endfor %}
-    </ul>
+    <p><a href="{% url 'lista_usuarios' %}">← Volver a Usuarios</a></p>
 </body>
 </html>

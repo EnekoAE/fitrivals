@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><title>Lista de Retos</title></head>
+<body>
+    <h1>Retos Fitness Disponibles</h1>
+    <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
+    <ul>
+        {% for reto in retos %}
+            <li>
+                <a href="{% url 'detalle_reto' reto.pk %}">{{ reto.nombre }}</a> 
+                ({{ reto.puntos_recompensa }} pts)
+            </li>
+        {% empty %}
+            <li>No hay retos disponibles actualmente.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><title>Detalle de Entrenamiento</title></head>
+<body>
+    <h1>Entrenamiento de {{ entrenamiento.usuario.nombre }}</h1>
+    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }}</p>
+    <p><strong>Duración:</strong> {{ entrenamiento.duracion_minutos }} minutos</p>
+    <p><strong>Notas:</strong> {{ entrenamiento.notas|default:"Sin notas" }}</p>
+    
+    <h3>Ejercicios Realizados</h3>
+    <ul>
+        {% for item in entrenamiento.entrenamientoejercicio_set.all %}
+            <li>
+                <a href="{% url 'detalle_ejercicio' item.ejercicio.pk %}">{{ item.ejercicio.nombre }}</a>: 
+                {{ item.series }} series x {{ item.repeticiones }} reps ({{ item.peso_kg }} kg)
+            </li>
+        {% empty %}
+            <li>No hay ejercicios detallados en esta sesión.</li>
+        {% endfor %}
+    </ul>
+    
+    <p><a href="{% url 'lista_entrenamientos' %}">← Volver a Entrenamientos</a></p>
+</body>
+</html>

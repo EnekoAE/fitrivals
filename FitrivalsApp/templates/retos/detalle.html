@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><title>Detalle del Reto</title></head>
+<body>
+    <h1>{{ reto.nombre }}</h1>
+    <p><strong>Descripción:</strong> {{ reto.descripcion|default:"Sin descripción" }}</p>
+    <p><strong>Puntos de Recompensa:</strong> {{ reto.puntos_recompensa }} pts</p>
+    <p><a href="{% url 'lista_retos' %}">← Volver a Retos</a></p>
+</body>
+</html>

@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -45,17 +43,6 @@ class Entrenamiento(models.Model):
 
     def __str__(self):
         return f"Entrenamiento de {self.usuario.nombre} - {self.fecha}"
-    
-class Reto(models.Model):
-    titulo = models.CharField(max_length=100)
-    ejercicio = models.ForeignKey(Ejercicio, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='retos')
-    puntuacion = models.IntegerField(default=10)
-    completado = models.BooleanField(default=False)
-    fecha_creacion = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.titulo} - {self.usuario.nombre}"
 
 
 class EntrenamientoEjercicio(models.Model):
@@ -67,3 +54,12 @@ class EntrenamientoEjercicio(models.Model):
 
     def __str__(self):
         return f"{self.ejercicio.nombre} en {self.entrenamiento}"
+
+
+class Reto(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    puntos_recompensa = models.IntegerField(default=50)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.puntos_recompensa} pts)"

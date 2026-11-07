@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Usuarios - FitRivals</title>
-</head>
+<head><title>Lista de Usuarios</title></head>
 <body>
-    <a href="{% url 'index' %}">← Inicio</a>
-    <h1>Usuarios</h1>
-
-    <table border="1">
-        <tr><th>Nombre</th><th>Email</th><th>Puntos</th></tr>
-        {% for u in usuarios %}
-        <tr>
-            <td><a href="{% url 'detalle_usuario' u.pk %}">{{ u.nombre }}</a></td>
-            <td>{{ u.email }}</td>
-            <td>{{ u.puntos }}</td>
-        </tr>
+    <h1>Usuarios Registrados</h1>
+    <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
+    <ul>
+        {% for usuario in usuarios %}
+            <li>
+                <a href="{% url 'detalle_usuario' usuario.pk %}">{{ usuario.nombre }}</a> 
+                ({{ usuario.puntos }} pts)
+            </li>
         {% empty %}
-        <tr><td colspan="3">No hay usuarios.</td></tr>
+            <li>No hay usuarios registrados.</li>
         {% endfor %}
-    </table>
+    </ul>
 </body>
 </html>

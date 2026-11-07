@@ -2,17 +2,18 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>FitRivals</title>
+    <title>Fitrivals - Panel Principal</title>
 </head>
 <body>
-    <h1>Bienvenido a FitRivals</h1>
-    <p>Gimnasio y retos fitness entre amigos.</p>
-
-    <ul>
-        <li><a href="{% url 'lista_usuarios' %}">Usuarios</a>: {{ num_usuarios }}</li>
-        <li>Ejercicios: {{ num_ejercicios }}</li>
-        <li>Entrenamientos: {{ num_entrenamientos }}</li>
-        <li>Retos: {{ num_retos }}</li>
-    </ul>
+    <h1>Bienvenido a Fitrivals</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'lista_usuarios' %}">Lista de Usuarios</a></li>
+            <li><a href="{% url 'lista_ejercicios' %}">Catálogo de Ejercicios</a></li>
+            <li><a href="{% url 'lista_entrenamientos' %}">Historial de Entrenamientos</a></li>
+            <li><a href="{% url 'lista_retos' %}">Retos Fitness</a></li>
+            <li><a href="/admin/">Panel de Administración</a></li>
+        </ul>
+    </nav>
 </body>
 </html>
