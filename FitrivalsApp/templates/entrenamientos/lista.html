@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrenamientos - FitRivals</title>
+</head>
+<body>
+    <a href="{% url 'index' %}">← Inicio</a>
+    <h1>Entrenamientos</h1>
+    <ul>
+        {% for e in entrenamientos %}
+        <li>
+            <a href="{% url 'detalle_entrenamiento' e.pk %}">{{ e.fecha|date:"d/m/Y" }}</a>
+            — {{ e.usuario.nombre }} ({{ e.duracion_minutos }} min)
+        </li>
+        {% empty %}
+        <li>No hay entrenamientos.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

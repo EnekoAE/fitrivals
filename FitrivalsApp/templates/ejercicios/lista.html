@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejercicios - FitRivals</title>
+</head>
+<body>
+    <a href="{% url 'index' %}">← Inicio</a>
+    <h1>Ejercicios</h1>
+    <ul>
+        {% for ej in ejercicios %}
+        <li>
+            <a href="{% url 'detalle_ejercicio' ej.pk %}">{{ ej.nombre }}</a>
+            ({{ ej.get_grupo_muscular_display }})
+        </li>
+        {% empty %}
+        <li>No hay ejercicios.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

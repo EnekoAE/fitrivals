@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ ejercicio.nombre }} - FitRivals</title>
+</head>
+<body>
+    <a href="{% url 'lista_ejercicios' %}">← Ejercicios</a>
+    <h1>{{ ejercicio.nombre }}</h1>
+    <p>Grupo muscular: {{ ejercicio.get_grupo_muscular_display }}</p>
+    <p>Dificultad: {{ ejercicio.get_dificultad_display }}</p>
+
+    <h2>Entrenamientos que lo incluyen</h2>
+    <ul>
+        {% for e in entrenamientos %}
+        <li>
+            <a href="{% url 'detalle_entrenamiento' e.pk %}">{{ e.fecha|date:"d/m/Y" }}</a>
+            — {{ e.usuario.nombre }}
+        </li>
+        {% empty %}
+        <li>Ningún entrenamiento todavía.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

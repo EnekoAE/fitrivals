@@ -24,3 +24,29 @@ def detalle_usuario(request, pk):
         'entrenamientos': entrenamientos,
         'retos': retos,
     })
+
+
+
+def lista_entrenamientos(request):
+    entrenamientos = Entrenamiento.objects.select_related('usuario').order_by('-fecha')
+    return render(request, 'entrenamientos/lista.html', {'entrenamientos': entrenamientos})
+
+def detalle_entrenamiento(request, pk):
+    entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
+    lineas = entrenamiento.entrenamientoejercicio_set.select_related('ejercicio')
+    return render(request, 'entrenamientos/detalle.html', {
+        'entrenamiento': entrenamiento,
+        'lineas': lineas,
+    })
+
+def lista_ejercicios(request):
+    ejercicios = Ejercicio.objects.order_by('nombre')
+    return render(request, 'ejercicios/lista.html', {'ejercicios': ejercicios})
+
+def detalle_ejercicio(request, pk):
+    ejercicio = get_object_or_404(Ejercicio, pk=pk)
+    entrenamientos = ejercicio.entrenamiento_set.select_related('usuario').order_by('-fecha')
+    return render(request, 'ejercicios/detalle.html', {
+        'ejercicio': ejercicio,
+        'entrenamientos': entrenamientos,
+    })
