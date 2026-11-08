@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Usuario, Ejercicio, Entrenamiento, Reto
 
-# Página Principal / Índice
+# Página Principal
 def index(request):
     return render(request, 'index.html')
 
