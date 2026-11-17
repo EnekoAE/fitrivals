@@ -1,0 +1,106 @@
+
+
+/* header */
+.site-header {
+  position: sticky;
+  top: .75rem;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem 1.5rem;
+  margin-bottom: 2rem;
+  padding: .7rem 1.1rem;
+  background: color-mix(in srgb, var(--card, #ffffff) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line, #e6e8ef);
+  border-radius: 18px;
+  box-shadow: var(--shadow, 0 6px 20px rgba(16, 24, 40, .08));
+}
+
+.site-header .brand {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text, #1f2430);
+}
+
+.site-header .brand:hover { text-decoration: none; }
+
+.site-header .brand span {
+  background: linear-gradient(90deg, var(--accent, #ff5a36), var(--accent-2, #ff9f1c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
+}
+
+.site-header nav a {
+  padding: .4rem .85rem;
+  border-radius: 999px;
+  color: var(--muted, #6b7280);
+  font-size: .92rem;
+  font-weight: 600;
+  transition: background .15s ease, color .15s ease;
+}
+
+.site-header nav a:hover {
+  background: rgba(255, 90, 54, .12);
+  color: var(--accent, #ff5a36);
+  text-decoration: none;
+}
+
+/* seccion actual */
+.site-header nav a.activo {
+  background: linear-gradient(90deg, var(--accent, #ff5a36), var(--accent-2, #ff9f1c));
+  color: #fff;
+}
+
+/* footer */
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  margin-top: 3.5rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line, #e6e8ef);
+  color: var(--muted, #6b7280);
+  font-size: .88rem;
+}
+
+.site-footer .footer-brand {
+  font-weight: 800;
+  color: var(--text, #1f2430);
+}
+
+.site-footer .footer-brand b {
+  background: linear-gradient(90deg, var(--accent, #ff5a36), var(--accent-2, #ff9f1c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.site-footer a {
+  font-weight: 600;
+}
+
+/* para movil */
+@media (max-width: 560px) {
+  .site-header {
+    justify-content: center;
+    text-align: center;
+  }
+  .site-footer {
+    justify-content: center;
+    text-align: center;
+  }
+}
