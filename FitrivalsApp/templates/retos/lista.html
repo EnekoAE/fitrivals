@@ -1,6 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
-<head><title>Lista de Retos</title></head>
+<head>
+    <title>Lista de Retos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'FitrivalsApp/css/estilos.css' %}">
+</head>
 <body>
     <h1>Retos Fitness Disponibles</h1>
     <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
