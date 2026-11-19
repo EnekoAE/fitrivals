@@ -1,173 +1,338 @@
 /* ==========================================================
-   estilos.css - FitRivals (estilos generales)
+   estilos.css - FitRivals (Estilo Blanco + Naranja Strava)
    ========================================================== */
 
-:root {
-  --bg: #f5f6fa;
-  --card: #ffffff;
-  --text: #1f2430;
-  --muted: #6b7280;
-  --line: #e6e8ef;
-  --accent: #ff5a36;
-  --accent-2: #ff9f1c;
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 6px 20px rgba(16, 24, 40, .06);
-  --shadow-hover: 0 2px 4px rgba(16, 24, 40, .06), 0 14px 30px rgba(16, 24, 40, .12);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1218;
-    --card: #181c25;
-    --text: #eef0f6;
-    --muted: #9aa3b5;
-    --line: #272c38;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .25);
-    --shadow-hover: 0 2px 4px rgba(0, 0, 0, .4), 0 14px 30px rgba(0, 0, 0, .4);
+   :root {
+    --strava-orange: #FC4C02;
+    --strava-orange-hover: #E34402;
+    --strava-orange-soft: rgba(252, 76, 2, 0.08);
+    --bg-page: #F7F7FA;
+    --bg-white: #FFFFFF;
+    --text-dark: #242428;
+    --text-muted: #6D6D78;
+    --border-light: #E6E6EB;
+    --radius: 10px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
   }
-}
-
-*, *::before, *::after { box-sizing: border-box; }
-
-html {
-  min-height: 100%;
-  background:
-    radial-gradient(900px 380px at 50% -120px, rgba(255, 90, 54, .20), transparent 70%),
-    var(--bg);
-  background-repeat: no-repeat;
-}
-
-body {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
-
-::selection { background: var(--accent); color: #fff; }
-
-/* ---------- Títulos ---------- */
-h1 {
-  margin: 1.2rem 0 .6rem;
-  font-size: clamp(1.9rem, 5vw, 2.7rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -.02em;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-h2 {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  margin: 2.2rem 0 .9rem;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-h2::before {
-  content: "";
-  width: 6px;
-  height: 1.1em;
-  border-radius: 3px;
-  background: linear-gradient(var(--accent), var(--accent-2));
-}
-
-/* ---------- Enlaces ---------- */
-a {
-  color: var(--accent);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* Enlace "← volver" (primer enlace directo del body) */
-body > a:first-of-type {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  padding: .4rem .95rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--muted);
-  font-size: .9rem;
-  box-shadow: var(--shadow);
-  transition: transform .15s ease, color .15s ease, border-color .15s ease;
-}
-
-body > a:first-of-type:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  text-decoration: none;
-  transform: translateX(-3px);
-}
-
-/* ---------- Datos de los detalles (<p>) ---------- */
-p {
-  margin: 0 0 .6rem;
-  padding: .75rem 1.1rem;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-}
-
-/* ---------- Listas como tarjetas ---------- */
-ul {
-  display: grid;
-  gap: .65rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-li {
-  padding: .95rem 1.2rem;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-}
-
-li:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 90, 54, .4);
-  box-shadow: var(--shadow-hover);
-}
-
-li a {
-  font-size: 1.02rem;
-  font-weight: 700;
-}
-
-/* ---------- Índice: el menú <nav><ul> en cuadrícula ---------- */
-body > nav > ul {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-body > nav > ul li {
-  padding: 1.6rem 1.3rem;
-}
-
-body > nav > ul li a {
-  font-size: 1.2rem;
-}
-
-/* ---------- Móvil ---------- */
-@media (max-width: 520px) {
-  body { padding: 1.5rem 1rem 3rem; }
-  li { padding: .85rem 1rem; }
-}
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background-color: var(--bg-page);
+    color: var(--text-dark);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  ::selection {
+    background: var(--strava-orange);
+    color: #FFFFFF;
+  }
+  
+  /* ---------- Tipografía ---------- */
+  h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.75rem, 4vw, 2.35rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-dark);
+  }
+  
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 2rem 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  h2::before {
+    content: "";
+    width: 4px;
+    height: 1.15em;
+    border-radius: 2px;
+    background-color: var(--strava-orange);
+  }
+  
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  a {
+    color: var(--strava-orange);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  
+  a:hover {
+    color: var(--strava-orange-hover);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  
+  /* ---------- Botones estilo Strava ---------- */
+  .btn-primary-strava {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.65rem 1.35rem;
+    background-color: var(--strava-orange);
+    color: #FFFFFF;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+  
+  .btn-primary-strava:hover {
+    background-color: var(--strava-orange-hover);
+    color: #FFFFFF;
+    text-decoration: none;
+  }
+  
+  .btn-primary-strava:disabled {
+    background-color: #B8B8C2;
+    cursor: not-allowed;
+  }
+  
+  .btn-secondary-strava {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.65rem 1.35rem;
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .btn-secondary-strava:hover {
+    border-color: var(--strava-orange);
+    color: var(--strava-orange);
+    text-decoration: none;
+  }
+  
+  /* ---------- Hero / Banner del Panel Principal ---------- */
+  .dashboard-hero {
+    margin-bottom: 2rem;
+  }
+  
+  .hero-card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-left: 5px solid var(--strava-orange);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .badge-orange {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    margin-bottom: 0.85rem;
+    background-color: var(--strava-orange-soft);
+    color: var(--strava-orange);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  
+  .hero-card p {
+    margin: 0 0 1.4rem;
+    color: var(--text-muted);
+    max-width: 650px;
+  }
+  
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  /* ---------- Grid de Tarjetas ---------- */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .info-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  }
+  
+  .info-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: rgba(252, 76, 2, 0.35);
+  }
+  
+  .info-card p {
+    margin: 0 0 1.2rem;
+    color: var(--text-muted);
+    font-size: 0.94rem;
+  }
+  
+  .card-link {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--strava-orange);
+  }
+  
+  /* ---------- Listados limpios (compatibles con vistas existentes) ---------- */
+  .main-wrapper > ul {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .main-wrapper > ul > li {
+    padding: 1rem 1.25rem;
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .main-wrapper > ul > li:hover {
+    border-color: var(--strava-orange);
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* ---------- Tablas (Ranking, Entrenamientos, Retos) ---------- */
+  .strava-table-wrapper {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .strava-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+  
+  .strava-table th {
+    padding: 0.9rem 1.2rem;
+    background-color: #FAFAFC;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  
+  .strava-table td {
+    padding: 0.95rem 1.2rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-dark);
+  }
+  
+  .strava-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .strava-table tr:hover td {
+    background-color: #FCFCFE;
+  }
+  
+  .points-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    background-color: var(--strava-orange-soft);
+    color: var(--strava-orange);
+    font-weight: 800;
+    font-size: 0.85rem;
+    border-radius: 999px;
+  }
+  
+  /* ---------- Formularios públicos (E4a Opción 3) ---------- */
+  .form-card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    max-width: 600px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .form-group {
+    margin-bottom: 1.15rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    background-color: var(--bg-white);
+    transition: border-color 0.15s ease;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--strava-orange);
+  }
+  
+  /* ---------- Responsive ---------- */
+  @media (max-width: 600px) {
+    .hero-card {
+      padding: 1.35rem;
+    }
+  }

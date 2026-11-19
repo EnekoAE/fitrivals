@@ -1,106 +1,228 @@
+/* =========================================
+   HEADER & FOOTER - ESTILO STRAVA (FIT RIVALS)
+   ========================================= */
 
-
-/* header */
-.site-header {
-  position: sticky;
-  top: .75rem;
-  z-index: 100;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: .6rem 1.5rem;
-  margin-bottom: 2rem;
-  padding: .7rem 1.1rem;
-  background: color-mix(in srgb, var(--card, #ffffff) 82%, transparent);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--line, #e6e8ef);
-  border-radius: 18px;
-  box-shadow: var(--shadow, 0 6px 20px rgba(16, 24, 40, .08));
-}
-
-.site-header .brand {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -.02em;
-  color: var(--text, #1f2430);
-}
-
-.site-header .brand:hover { text-decoration: none; }
-
-.site-header .brand span {
-  background: linear-gradient(90deg, var(--accent, #ff5a36), var(--accent-2, #ff9f1c));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.site-header nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .25rem;
-}
-
-.site-header nav a {
-  padding: .4rem .85rem;
-  border-radius: 999px;
-  color: var(--muted, #6b7280);
-  font-size: .92rem;
-  font-weight: 600;
-  transition: background .15s ease, color .15s ease;
-}
-
-.site-header nav a:hover {
-  background: rgba(255, 90, 54, .12);
-  color: var(--accent, #ff5a36);
-  text-decoration: none;
-}
-
-/* seccion actual */
-.site-header nav a.activo {
-  background: linear-gradient(90deg, var(--accent, #ff5a36), var(--accent-2, #ff9f1c));
-  color: #fff;
-}
-
-/* footer */
-.site-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: .5rem 1rem;
-  margin-top: 3.5rem;
-  padding-top: 1.4rem;
-  border-top: 1px solid var(--line, #e6e8ef);
-  color: var(--muted, #6b7280);
-  font-size: .88rem;
-}
-
-.site-footer .footer-brand {
-  font-weight: 800;
-  color: var(--text, #1f2430);
-}
-
-.site-footer .footer-brand b {
-  background: linear-gradient(90deg, var(--accent, #ff5a36), var(--accent-2, #ff9f1c));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.site-footer a {
-  font-weight: 600;
-}
-
-/* para movil */
-@media (max-width: 560px) {
+   :root {
+    --strava-orange: #FC4C02;
+    --strava-orange-hover: #E34402;
+    --strava-orange-soft: rgba(252, 76, 2, 0.08);
+    --bg-page: #F7F7FA;
+    --bg-white: #FFFFFF;
+    --text-dark: #242428;
+    --text-muted: #6D6D78;
+    --border-light: #E6E6EB;
+  }
+  
+  /* Barra de navegación superior */
   .site-header {
-    justify-content: center;
-    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
+  
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  
+  /* Logo / Marca */
+  .site-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--text-dark);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  
+  .site-header .brand span {
+    color: var(--strava-orange);
+  }
+  
+  /* Enlaces centrales */
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 100%;
+  }
+  
+  .site-nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .site-nav a:hover {
+    color: var(--text-dark);
+    background-color: var(--bg-page);
+  }
+  
+  /* Indicador inferior estilo Strava para la pestaña activa */
+  .site-nav a.activo {
+    color: var(--strava-orange);
+    font-weight: 700;
+  }
+  
+  .site-nav a.activo::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--strava-orange);
+  }
+  
+  /* Zona derecha: Usuario y Login */
+  .header-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    background-color: var(--bg-page);
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  
+  .user-pill:hover {
+    border-color: var(--strava-orange);
+  }
+  
+  .user-avatar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--strava-orange);
+  }
+  
+  .btn-login-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.48rem 1.1rem;
+    background-color: var(--strava-orange);
+    color: #FFFFFF;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border-radius: 6px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+  
+  .btn-login-nav:hover {
+    background-color: var(--strava-orange-hover);
+    color: #FFFFFF;
+  }
+  
+  /* Contenedor principal de la página */
+  .main-wrapper {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    min-height: calc(100vh - 200px);
+  }
+  
+  /* Footer blanco y limpio */
   .site-footer {
-    justify-content: center;
-    text-align: center;
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border-light);
+    margin-top: 4rem;
+    padding: 2rem 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
   }
-}
+  
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .site-footer .footer-brand {
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--text-dark);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  
+  .site-footer .footer-brand span {
+    color: var(--strava-orange);
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+  
+  .footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+  
+  .footer-links a:hover {
+    color: var(--strava-orange);
+  }
+  
+  /* Responsive móvil */
+  @media (max-width: 768px) {
+    .header-container {
+      height: auto;
+      flex-wrap: wrap;
+      padding: 0.75rem 1rem;
+    }
+  
+    .site-nav {
+      order: 3;
+      width: 100%;
+      overflow-x: auto;
+      border-top: 1px solid var(--border-light);
+      padding-top: 0.4rem;
+      margin-top: 0.4rem;
+    }
+  
+    .site-nav a {
+      padding: 0.5rem 0.75rem;
+      white-space: nowrap;
+    }
+  }

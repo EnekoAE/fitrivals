@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Fit Rivals{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-container">
+            <a href="{% url 'index' %}" class="brand">
+                FIT<span>RIVALS</span>
+            </a>
+
+            <nav class="site-nav">
+                <a href="{% url 'lista_entrenamientos' %}" class="{% if 'entrenamiento' in request.resolver_match.url_name %}activo{% endif %}">
+                    Entrenamientos
+                </a>
+                <a href="{% url 'lista_retos' %}" class="{% if 'reto' in request.resolver_match.url_name %}activo{% endif %}">
+                    Retos del Día
+                </a>
+                <a href="{% url 'lista_ejercicios' %}" class="{% if 'ejercicio' in request.resolver_match.url_name %}activo{% endif %}">
+                    Ejercicios
+                </a>
+            </nav>
+
+            <div class="header-user-actions">
+                {% if request.session.usuario_nombre %}
+                    <a href="{% url 'detalle_usuario' request.session.usuario_id %}" class="user-pill">
+                        <span class="user-avatar-dot"></span>
+                        {{ request.session.usuario_nombre }}
+                    </a>
+                    <a href="{% url 'lista_usuarios' %}" class="btn-login-nav" style="background-color: #242428;">
+                        Cambiar atleta
+                    </a>
+                {% else %}
+                    <a href="{% url 'lista_usuarios' %}" class="user-pill">
+                        <span class="user-avatar-dot"></span>
+                        Invitado
+                    </a>
+                    <a href="{% url 'lista_usuarios' %}" class="btn-login-nav">
+                        Iniciar sesión
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                FIT<span>RIVALS</span> &copy; 2026
+            </div>
+            <div class="footer-links">
+                <a href="{% url 'lista_entrenamientos' %}">Entrenamientos</a>
+                <a href="{% url 'lista_retos' %}">Retos del Día</a>
+                <a href="{% url 'lista_ejercicios' %}">Ejercicios</a>
+            </div>
+            <div>
+                Ingeniería Web &middot; Proyecto Colaborativo
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
