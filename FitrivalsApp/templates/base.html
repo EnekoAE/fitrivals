@@ -23,14 +23,13 @@
                     Entrenamientos
                 </a>
                 <a href="{% url 'lista_retos' %}" class="{% if 'reto' in request.resolver_match.url_name %}activo{% endif %}">
-                    Retos del Día
+                    Retos Semanales
                 </a>
                 <a href="{% url 'lista_ejercicios' %}" class="{% if 'ejercicio' in request.resolver_match.url_name %}activo{% endif %}">
                     Ejercicios
                 </a>
             </nav>
 
-            <!-- Portal de Usuarios arriba a la derecha -->
             <div class="header-user-actions">
                 {% if request.session.usuario_nombre %}
                     <a href="{% url 'detalle_usuario' request.session.usuario_id %}" class="user-pill">

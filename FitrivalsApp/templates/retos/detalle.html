@@ -1,16 +1,48 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Detalle del Reto</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}{{ reto.nombre }} - Fit Rivals{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'lista_retos' %}">&larr; Volver a Retos Semanales</a></p>
+
+<div class="hero-card" style="margin-bottom: 2rem;">
+    <span class="points-badge" style="margin-bottom: 0.75rem;">Recompensa: +{{ reto.puntos_recompensa }} pts</span>
     <h1>{{ reto.nombre }}</h1>
-    <p><strong>Descripción:</strong> {{ reto.descripcion|default:"Sin descripción" }}</p>
-    <p><strong>Puntos de Recompensa:</strong> {{ reto.puntos_recompensa }} pts</p>
-    <p><a href="{% url 'lista_retos' %}">← Volver a Retos</a></p>
-</body>
-</html>
+    <p>{{ reto.descripcion }}</p>
+</div>
+
+<h2>Ejercicios incluidos en este reto</h2>
+<div class="strava-table-wrapper" style="margin-bottom: 2rem;">
+    <table class="strava-table">
+        <thead>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Grupo Muscular</th>
+                <th>Dificultad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ej in reto.ejercicios.all %}
+            <tr>
+                <td><a href="{% url 'detalle_ejercicio' ej.pk %}">{{ ej.nombre }}</a></td>
+                <td>{{ ej.get_grupo_muscular_display }}</td>
+                <td>{{ ej.get_dificultad_display }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Este reto aún no tiene ejercicios asociados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2>Atletas que lo han completado</h2>
+<ul>
+    {% for atleta in reto.completado_por.all %}
+        <li><a href="{% url 'detalle_usuario' atleta.pk %}">{{ atleta.nombre }}</a> - {{ atleta.puntos }} pts</li>
+    {% empty %}
+        <li>Nadie lo ha completado todavía.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

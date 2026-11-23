@@ -1,12 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import make_password, check_password
+from django.views.generic import ListView, DetailView
+from django.http import JsonResponse
 from .models import Usuario, Ejercicio, Entrenamiento, Reto
 from .forms import RegistroUsuarioForm, LoginUsuarioForm
 
 
 # Página Principal
 def index(request):
-    return render(request, 'index.html')
+    retos = Reto.objects.all()
+    usuarios = Usuario.objects.order_by('-puntos')
+    return render(request, 'index.html', {
+        'retos': retos,
+        'usuarios': usuarios,
+    })
 
 
 # Portal de Usuarios: Registro, Login y Logout
@@ -51,7 +58,7 @@ def logout_usuario(request):
 
 # Vistas de Usuarios
 def lista_usuarios(request):
-    usuarios = Usuario.objects.all()
+    usuarios = Usuario.objects.order_by('-puntos')
     return render(request, 'usuarios/lista.html', {'usuarios': usuarios})
 
 
@@ -82,12 +89,37 @@ def detalle_entrenamiento(request, pk):
     return render(request, 'entrenamientos/detalle.html', {'entrenamiento': entrenamiento})
 
 
-# Vistas de Retos
-def lista_retos(request):
-    retos = Reto.objects.all()
-    return render(request, 'retos/lista.html', {'retos': retos})
+# Vistas Basadas en Clases para Retos Semanales (Opción 2 E4a)
+class RetoListView(ListView):
+    model = Reto
+    template_name = 'retos/lista.html'
+    context_object_name = 'retos'
 
 
-def detalle_reto(request, pk):
-    reto = get_object_or_404(Reto, pk=pk)
-    return render(request, 'retos/detalle.html', {'reto': reto})
+class RetoDetailView(DetailView):
+    model = Reto
+    template_name = 'retos/detalle.html'
+    context_object_name = 'reto'
+
+
+# Vista AJAX para completar reto semanal y sumar puntos (Opción 1 E4a)
+def completar_reto(request, pk):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return JsonResponse({'ok': False, 'mensaje': 'Inicia sesión para sumar puntos.'})
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    reto = get_object_or_404(Reto, id=pk)
+
+    if reto.completado_por.filter(id=usuario.id).exists():
+        return JsonResponse({'ok': False, 'mensaje': 'Ya habías completado este reto.'})
+
+    reto.completado_por.add(usuario)
+    usuario.puntos += reto.puntos_recompensa
+    usuario.save()
+
+    return JsonResponse({
+        'ok': True,
+        'mensaje': f'¡Genial! Has ganado +{reto.puntos_recompensa} puntos.',
+        'puntos_totales': usuario.puntos,
+    })

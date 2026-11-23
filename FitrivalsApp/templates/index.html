@@ -6,8 +6,34 @@
 <section class="dashboard-hero">
     <div class="hero-card">
         <span class="badge-orange">FIT RIVALS</span>
-        <h1>Supera el reto de hoy y compite con tus amigos</h1>
-        <p>Sigue los entrenamientos recomendados por la app, registra el reto diario y suma puntos para liderar la clasificación.</p>
+        <h1>Supera los retos semanales y compite con tus amigos</h1>
+        <p>Completa los desafíos temáticos de cada semana, sigue los entrenamientos recomendados y suma puntos para liderar el ranking.</p>
     </div>
 </section>
+
+<h2>Clasificación de Atletas</h2>
+<div class="strava-table-wrapper">
+    <table class="strava-table">
+        <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Atleta</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td><strong>#{{ forloop.counter }}</strong></td>
+                <td><a href="{% url 'detalle_usuario' u.pk %}">{{ u.nombre }}</a></td>
+                <td><span class="points-badge">{{ u.puntos }} pts</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No hay atletas registrados todavía.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

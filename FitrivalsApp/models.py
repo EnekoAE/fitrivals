@@ -33,7 +33,7 @@ class Ejercicio(models.Model):
     dificultad = models.CharField(max_length=20, choices=DIFICULTAD_CHOICES)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.get_grupo_muscular_display()})"
 
 
 class Entrenamiento(models.Model):
@@ -61,7 +61,9 @@ class EntrenamientoEjercicio(models.Model):
 class Reto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
-    puntos_recompensa = models.IntegerField(default=50)
+    puntos_recompensa = models.IntegerField(default=100)
+    ejercicios = models.ManyToManyField(Ejercicio, related_name='retos', blank=True)
+    completado_por = models.ManyToManyField(Usuario, related_name='retos_completados', blank=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.puntos_recompensa} pts)"
