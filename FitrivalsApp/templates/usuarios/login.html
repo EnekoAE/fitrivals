@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesión - Fit Rivals{% endblock %}
+
+{% block content %}
+<div class="form-card" style="margin: 2rem auto;">
+    <span class="badge-orange">ACCESO ATLETAS</span>
+    <h1>Iniciar sesión</h1>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        Introduce tu nombre de usuario y contraseña para acceder a tu perfil.
+    </p>
+
+    {% if error %}
+        <div style="padding: 0.75rem 1rem; margin-bottom: 1rem; background-color: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
+            {{ form.nombre }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="btn-primary-strava" style="width: 100%; margin-top: 0.5rem;">
+            Entrar
+        </button>
+    </form>
+
+    <p style="margin-top: 1.25rem; font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+        ¿Aún no tienes cuenta? <a href="{% url 'registro_usuario' %}">Créala ahora</a>
+    </p>
+</div>
+{% endblock %}

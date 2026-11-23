@@ -30,21 +30,21 @@
                 </a>
             </nav>
 
+            <!-- Portal de Usuarios arriba a la derecha -->
             <div class="header-user-actions">
                 {% if request.session.usuario_nombre %}
                     <a href="{% url 'detalle_usuario' request.session.usuario_id %}" class="user-pill">
                         <span class="user-avatar-dot"></span>
                         {{ request.session.usuario_nombre }}
                     </a>
-                    <a href="{% url 'lista_usuarios' %}" class="btn-login-nav" style="background-color: #242428;">
-                        Cambiar atleta
+                    <a href="{% url 'logout_usuario' %}" class="btn-secondary-nav">
+                        Cerrar sesión
                     </a>
                 {% else %}
-                    <a href="{% url 'lista_usuarios' %}" class="user-pill">
-                        <span class="user-avatar-dot"></span>
-                        Invitado
+                    <a href="{% url 'registro_usuario' %}" class="btn-secondary-nav">
+                        Crear cuenta
                     </a>
-                    <a href="{% url 'lista_usuarios' %}" class="btn-login-nav">
+                    <a href="{% url 'login_usuario' %}" class="btn-login-nav">
                         Iniciar sesión
                     </a>
                 {% endif %}
@@ -60,15 +60,10 @@
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-brand">
-                FIT<span>RIVALS</span> &copy; 2026
-            </div>
-            <div class="footer-links">
-                <a href="{% url 'lista_entrenamientos' %}">Entrenamientos</a>
-                <a href="{% url 'lista_retos' %}">Retos del Día</a>
-                <a href="{% url 'lista_ejercicios' %}">Ejercicios</a>
+                FIT<span>RIVALS</span>
             </div>
             <div>
-                Ingeniería Web &middot; Proyecto Colaborativo
+                &copy; 2026 Fit Rivals. Todos los derechos reservados.
             </div>
         </div>
     </footer>

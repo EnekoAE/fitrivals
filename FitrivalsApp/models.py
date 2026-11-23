@@ -1,8 +1,10 @@
 from django.db import models
 
+
 class Usuario(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
     fecha_alta = models.DateField(auto_now_add=True)
     puntos = models.IntegerField(default=0)
 
@@ -19,7 +21,7 @@ class Ejercicio(models.Model):
         ('HOMBROS', 'Hombros'),
         ('CORE', 'Core'),
     ]
-    
+
     DIFICULTAD_CHOICES = [
         ('FACIL', 'Fácil'),
         ('INTERMEDIO', 'Intermedio'),

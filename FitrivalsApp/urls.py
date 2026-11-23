@@ -3,19 +3,24 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    
+
+    # Autenticación / Portal de Usuarios
+    path('registro/', views.registro_usuario, name='registro_usuario'),
+    path('login/', views.login_usuario, name='login_usuario'),
+    path('logout/', views.logout_usuario, name='logout_usuario'),
+
     # Usuarios
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/<int:pk>/', views.detalle_usuario, name='detalle_usuario'),
-    
+
     # Ejercicios
     path('ejercicios/', views.lista_ejercicios, name='lista_ejercicios'),
     path('ejercicios/<int:pk>/', views.detalle_ejercicio, name='detalle_ejercicio'),
-    
+
     # Entrenamientos
     path('entrenamientos/', views.lista_entrenamientos, name='lista_entrenamientos'),
     path('entrenamientos/<int:pk>/', views.detalle_entrenamiento, name='detalle_entrenamiento'),
-    
+
     # Retos
     path('retos/', views.lista_retos, name='lista_retos'),
     path('retos/<int:pk>/', views.detalle_reto, name='detalle_reto'),
