@@ -26,6 +26,13 @@
         {% endfor %}
     </ul>
 
-    <p><a href="{% url 'lista_usuarios' %}">← Volver a Usuarios</a></p>
+    <div class="detalle-acciones">
+        {% if request.session.usuario_id == usuario.id %}
+            <a href="{% url 'index' %}" class="btn-primary">Volver al inicio</a>
+            <a href="{% url 'lista_usuarios' %}" class="btn-secondary">Ver lista de amigos</a>
+        {% else %}
+            <a href="{% url 'lista_usuarios' %}" class="btn-primary">Volver a usuarios</a>
+        {% endif %}
+    </div>
 </body>
 </html>

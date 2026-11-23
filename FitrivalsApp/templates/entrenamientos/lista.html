@@ -1,26 +1,32 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Lista de Entrenamientos</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-</head>
-<body>
-    <h1>Historial de Entrenamientos</h1>
-    <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
-    <ul>
+{% extends 'base.html' %}
+
+{% block title %}Entrenamientos | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Historial de Entrenamientos</h1>
+        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+    </div>
+
+    <div class="dashboard-grid">
         {% for entrenamiento in entrenamientos %}
-            <li>
-                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}">
-                    {{ entrenamiento.fecha }} - {{ entrenamiento.usuario.nombre }}
-                </a> 
-                ({{ entrenamiento.duracion_minutos }} min)
-            </li>
+            <div class="info-card">
+                <div>
+                    <span class="points-badge">{{ entrenamiento.duracion_minutos }} min</span>
+                    <h3>{{ entrenamiento.usuario.nombre }}</h3>
+                    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }}</p>
+                    {% if entrenamiento.notas %}
+                        <p>{{ entrenamiento.notas }}</p>
+                    {% endif %}
+                </div>
+                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">
+                    Ver detalle →
+                </a>
+            </div>
         {% empty %}
-            <li>No hay entrenamientos registrados.</li>
+            <div class="info-card">
+                <p>No hay entrenamientos registrados.</p>
+            </div>
         {% endfor %}
-    </ul>
-</body>
-</html>
+    </div>
+{% endblock %}
