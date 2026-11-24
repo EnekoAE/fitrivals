@@ -18,7 +18,7 @@
             <div class="info-card">
                 <div>
                     {% if entrenamiento.reto %}
-                        <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }} (+{{ entrenamiento.reto.puntuacion }} pts)</span>
+                        <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }} (+{{ entrenamiento.reto.puntos_recompensa }} pts)</span>
                     {% else %}
                         <span class="points-badge">Entrenamiento libre · {{ entrenamiento.duracion_minutos }} min</span>
                     {% endif %}

@@ -123,6 +123,7 @@ def completar_reto(request, pk):
         'mensaje': f'¡Genial! Has ganado +{reto.puntos_recompensa} puntos.',
         'puntos_totales': usuario.puntos,
     })
+# FLUJO 1: Crear entrenamiento libre (NO es reto, NO suma puntos)
 def crear_entrenamiento(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
@@ -136,10 +137,9 @@ def crear_entrenamiento(request):
         if form.is_valid():
             entrenamiento = form.save(commit=False)
             entrenamiento.usuario = usuario
-            entrenamiento.reto = None  # Entrenamiento libre: no suma puntos
+            entrenamiento.reto = None
             entrenamiento.save()
 
-            # Guardamos los ejercicios añadidos en el formulario
             ejercicios_ids = request.POST.getlist('ejercicio')
             series_list = request.POST.getlist('series')
             reps_list = request.POST.getlist('repeticiones')
@@ -163,9 +163,14 @@ def crear_entrenamiento(request):
         'form': form,
         'ejercicios': ejercicios
     })
+
+
+# FLUJO 2: Completar un reto (CREA entrenamiento vinculado, SÍ suma puntos y soporta AJAX)
 def completar_reto(request, pk):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'mensaje': 'Inicia sesión para completar retos.'})
         return redirect('login_usuario')
 
     usuario = get_object_or_404(Usuario, id=usuario_id)
@@ -183,7 +188,7 @@ def completar_reto(request, pk):
             notas=notas or f"Reto superado: {reto.nombre}"
         )
 
-        # 2. Guardamos las marcas de cada ejercicio que pide el reto
+        # 2. Guardamos las marcas de cada ejercicio del reto
         for ejercicio in reto.ejercicios.all():
             series = int(request.POST.get(f'series_{ejercicio.id}', 3))
             reps = int(request.POST.get(f'reps_{ejercicio.id}', 10))
@@ -197,9 +202,17 @@ def completar_reto(request, pk):
                 peso_kg=peso
             )
 
-        # 3. Sumamos los puntos del reto al usuario
-        usuario.puntos += reto.puntuacion
+        # 3. Sumamos los puntos del reto al usuario (nombre real del campo: puntos_recompensa)
+        usuario.puntos += reto.puntos_recompensa
         usuario.save()
+
+        # Si viene por AJAX (jQuery), devolvemos JSON con la confirmación y el enlace al entrenamiento
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'ok': True,
+                'mensaje': f'¡Reto registrado! Has ganado +{reto.puntos_recompensa} puntos (Total: {usuario.puntos} pts).',
+                'redirect_url': f'/entrenamientos/{entrenamiento.pk}/'
+            })
 
         return redirect('detalle_entrenamiento', pk=entrenamiento.pk)
 

@@ -5,15 +5,17 @@
 {% block content %}
 <span class="badge-orange">DESAFÍOS DE LA SEMANA</span>
 <h1>Retos Semanales</h1>
-<p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-    Cada reto agrupa varios ejercicios temáticos. Complétalos esta semana y pulsa el botón para sumar tus puntos.
+<p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+    Cada reto agrupa varios ejercicios temáticos. Complétalos para registrar tu entrenamiento y sumar puntos.
 </p>
 
-<div id="mensaje-ajax" style="display: none; padding: 0.8rem 1rem; margin-bottom: 1.25rem; border-radius: 6px; font-weight: 600;"></div>
+<div class="form-group" style="max-width: 400px; margin-bottom: 1.5rem;">
+    <input type="text" id="buscador-retos" placeholder="Filtrar retos por nombre o ejercicio...">
+</div>
 
 <div class="dashboard-grid">
     {% for reto in retos %}
-    <article class="info-card">
+    <article class="info-card tarjeta-reto">
         <div>
             <span class="points-badge" style="margin-bottom: 0.6rem;">+{{ reto.puntos_recompensa }} pts</span>
             <h3><a href="{% url 'detalle_reto' reto.pk %}" style="color: var(--text-dark);">{{ reto.nombre }}</a></h3>
@@ -34,12 +36,9 @@
         </div>
 
         <div style="display: flex; gap: 0.5rem;">
-            <button type="button"
-                    class="btn-primary-strava btn-completar"
-                    data-url="{% url 'completar_reto' reto.pk %}"
-                    style="flex: 1;">
-                ¡He completado el reto!
-            </button>
+            <a href="{% url 'completar_reto' reto.pk %}" class="btn-primary-strava" style="flex: 1;">
+                Completar reto
+            </a>
             <a href="{% url 'detalle_reto' reto.pk %}" class="btn-secondary-strava">Ver</a>
         </div>
     </article>
@@ -52,23 +51,14 @@
 {% block extra_js %}
 <script>
 $(document).ready(function() {
-    $('.btn-completar').click(function() {
-        var boton = $(this);
-        var url = boton.data('url');
-
-        $.ajax({
-            url: url,
-            type: 'POST',
-            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-            success: function(datos) {
-                var caja = $('#mensaje-ajax');
-                if (datos.ok) {
-                    boton.prop('disabled', true).css('background-color', '#16a34a').text('Completado (+puntos)');
-                    caja.css({'background-color': '#ECFDF5', 'color': '#065F46', 'border': '1px solid #A7F3D0'});
-                } else {
-                    caja.css({'background-color': '#FEF2F2', 'color': '#B91C1C', 'border': '1px solid #FECACA'});
-                }
-                caja.text(datos.mensaje).fadeIn();
+    $('#buscador-retos').on('keyup', function() {
+        var texto = $(this).val().toLowerCase();
+        $('.tarjeta-reto').each(function() {
+            var contenido = $(this).text().toLowerCase();
+            if (contenido.indexOf(texto) > -1) {
+                $(this).fadeIn(150);
+            } else {
+                $(this).fadeOut(150);
             }
         });
     });

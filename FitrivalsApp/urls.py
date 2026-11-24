@@ -19,14 +19,11 @@ urlpatterns = [
 
     # Entrenamientos
     path('entrenamientos/', views.lista_entrenamientos, name='lista_entrenamientos'),
+    path('entrenamientos/nuevo/', views.crear_entrenamiento, name='crear_entrenamiento'),
     path('entrenamientos/<int:pk>/', views.detalle_entrenamiento, name='detalle_entrenamiento'),
 
     # Retos Semanales
     path('retos/', views.RetoListView.as_view(), name='lista_retos'),
     path('retos/<int:pk>/', views.RetoDetailView.as_view(), name='detalle_reto'),
-    path('retos/<int:pk>/completar/', views.completar_reto, name='completar_reto'),
-
-
-    path('entrenamientos/nuevo/', views.crear_entrenamiento, name='crear_entrenamiento'),
     path('retos/<int:pk>/completar/', views.completar_reto, name='completar_reto'),
 ]
