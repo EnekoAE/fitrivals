@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from .models import Usuario, Ejercicio, Entrenamiento, Reto,  EntrenamientoEjercicio
 from .forms import RegistroUsuarioForm, LoginUsuarioForm, EntrenamientoForm
+from datetime import date
 
 
 # Página Principal
@@ -138,6 +139,7 @@ def crear_entrenamiento(request):
             entrenamiento = form.save(commit=False)
             entrenamiento.usuario = usuario
             entrenamiento.reto = None
+            entrenamiento.fecha = date.today()
             entrenamiento.save()
 
             ejercicios_ids = request.POST.getlist('ejercicio')
@@ -184,6 +186,7 @@ def completar_reto(request, pk):
         entrenamiento = Entrenamiento.objects.create(
             usuario=usuario,
             reto=reto,
+            fecha=date.today(),
             duracion_minutos=duracion,
             notas=notas or f"Reto superado: {reto.nombre}"
         )
