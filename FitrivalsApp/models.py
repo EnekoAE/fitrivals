@@ -1,4 +1,6 @@
+import datetime
 from django.db import models
+from django.utils import timezone
 
 
 class Usuario(models.Model):
@@ -62,8 +64,19 @@ class Reto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     puntos_recompensa = models.IntegerField(default=100)
+    fecha_inicio = models.DateField(default=datetime.date(2026, 11, 23))
+    fecha_fin = models.DateField(default=datetime.date(2026, 11, 30))
     ejercicios = models.ManyToManyField(Ejercicio, related_name='retos', blank=True)
     completado_por = models.ManyToManyField(Usuario, related_name='retos_completados', blank=True)
 
+    @property
+    def estado_semana(self):
+        hoy = timezone.localdate()
+        if self.fecha_inicio <= hoy <= self.fecha_fin:
+            return 'ACTIVO'
+        elif hoy < self.fecha_inicio:
+            return 'PROXIMO'
+        return 'FINALIZADO'
+
     def __str__(self):
-        return f"{self.nombre} ({self.puntos_recompensa} pts)"
+        return f"{self.nombre} ({self.fecha_inicio} - {self.fecha_fin})"

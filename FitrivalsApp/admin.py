@@ -28,5 +28,6 @@ class EntrenamientoAdmin(admin.ModelAdmin):
 
 @admin.register(Reto)
 class RetoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'puntos_recompensa')
+    list_display = ('nombre', 'fecha_inicio', 'fecha_fin', 'puntos_recompensa')
+    list_filter = ('fecha_inicio', 'fecha_fin')
     filter_horizontal = ('ejercicios', 'completado_por')

@@ -6,16 +6,23 @@
 <span class="badge-orange">DESAFÍOS DE LA SEMANA</span>
 <h1>Retos Semanales</h1>
 <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-    Cada reto agrupa varios ejercicios temáticos. Complétalos esta semana y pulsa el botón para sumar tus puntos.
+    Cada semana se activan nuevos desafíos temáticos. Complétalos dentro de sus fechas para sumar puntos en el ranking.
 </p>
 
 <div id="mensaje-ajax" style="display: none; padding: 0.8rem 1rem; margin-bottom: 1.25rem; border-radius: 6px; font-weight: 600;"></div>
 
+<h2>Retos de esta semana</h2>
 <div class="dashboard-grid">
-    {% for reto in retos %}
+    {% for reto in retos_activos %}
     <article class="info-card">
         <div>
-            <span class="points-badge" style="margin-bottom: 0.6rem;">+{{ reto.puntos_recompensa }} pts</span>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                <span class="badge-orange" style="margin-bottom: 0;">
+                    Semana del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
+                </span>
+                <span class="points-badge" style="margin-bottom: 0;">+{{ reto.puntos_recompensa }} pts</span>
+            </div>
+
             <h3><a href="{% url 'detalle_reto' reto.pk %}" style="color: var(--text-dark);">{{ reto.nombre }}</a></h3>
             <p>{{ reto.descripcion }}</p>
 
@@ -34,19 +41,69 @@
         </div>
 
         <div style="display: flex; gap: 0.5rem;">
-            <button type="button"
-                    class="btn-primary-strava btn-completar"
-                    data-url="{% url 'completar_reto' reto.pk %}"
-                    style="flex: 1;">
-                ¡He completado el reto!
-            </button>
+            {% if reto.id in retos_completados_ids %}
+                <button type="button" class="btn-primary-strava" disabled style="flex: 1; background-color: #16a34a;">
+                    Completado (+{{ reto.puntos_recompensa }} pts)
+                </button>
+            {% else %}
+                <button type="button"
+                        class="btn-primary-strava btn-completar"
+                        data-url="{% url 'completar_reto' reto.pk %}"
+                        style="flex: 1;">
+                    ¡He completado el reto!
+                </button>
+            {% endif %}
             <a href="{% url 'detalle_reto' reto.pk %}" class="btn-secondary-strava">Ver</a>
         </div>
     </article>
     {% empty %}
-    <p>No hay retos semanales disponibles.</p>
+    <div class="info-card">
+        <p>No hay retos activos para esta semana.</p>
+    </div>
     {% endfor %}
 </div>
+
+{% if retos_proximos %}
+<h2>Próximos retos</h2>
+<div class="dashboard-grid">
+    {% for reto in retos_proximos %}
+    <article class="info-card">
+        <div>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
+                    Del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
+                </span>
+                <span class="points-badge" style="margin-bottom: 0;">+{{ reto.puntos_recompensa }} pts</span>
+            </div>
+            <h3><a href="{% url 'detalle_reto' reto.pk %}" style="color: var(--text-dark);">{{ reto.nombre }}</a></h3>
+            <p>{{ reto.descripcion }}</p>
+        </div>
+        <a href="{% url 'detalle_reto' reto.pk %}" class="card-link">Ver detalles →</a>
+    </article>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if retos_pasados %}
+<h2>Retos de semanas anteriores</h2>
+<div class="dashboard-grid">
+    {% for reto in retos_pasados %}
+    <article class="info-card">
+        <div>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
+                    Finalizado · Del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
+                </span>
+                <span class="points-badge" style="margin-bottom: 0;">+{{ reto.puntos_recompensa }} pts</span>
+            </div>
+            <h3><a href="{% url 'detalle_reto' reto.pk %}" style="color: var(--text-dark);">{{ reto.nombre }}</a></h3>
+            <p>{{ reto.descripcion }}</p>
+        </div>
+        <a href="{% url 'detalle_reto' reto.pk %}" class="card-link">Ver resultados →</a>
+    </article>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}

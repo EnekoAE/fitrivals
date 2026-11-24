@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
+from django.utils import timezone
 from .models import Usuario, Ejercicio, Entrenamiento, Reto
 from .forms import RegistroUsuarioForm, LoginUsuarioForm
 
@@ -80,8 +81,16 @@ def detalle_ejercicio(request, pk):
 
 # Vistas de Entrenamientos
 def lista_entrenamientos(request):
-    entrenamientos = Entrenamiento.objects.all()
-    return render(request, 'entrenamientos/lista.html', {'entrenamientos': entrenamientos})
+    entrenamientos = Entrenamiento.objects.select_related('usuario').order_by('-fecha')
+    retos_completados = (
+        Reto.objects.filter(completado_por__isnull=False)
+        .distinct()
+        .prefetch_related('completado_por')
+    )
+    return render(request, 'entrenamientos/lista.html', {
+        'entrenamientos': entrenamientos,
+        'retos_completados': retos_completados,
+    })
 
 
 def detalle_entrenamiento(request, pk):
@@ -94,6 +103,33 @@ class RetoListView(ListView):
     model = Reto
     template_name = 'retos/lista.html'
     context_object_name = 'retos'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        hoy = timezone.localdate()
+
+        context['retos_activos'] = Reto.objects.filter(
+            fecha_inicio__lte=hoy,
+            fecha_fin__gte=hoy
+        ).order_by('fecha_fin')
+
+        context['retos_proximos'] = Reto.objects.filter(
+            fecha_inicio__gt=hoy
+        ).order_by('fecha_inicio')
+
+        context['retos_pasados'] = Reto.objects.filter(
+            fecha_fin__lt=hoy
+        ).order_by('-fecha_fin')
+
+        usuario_id = self.request.session.get('usuario_id')
+        if usuario_id:
+            context['retos_completados_ids'] = list(
+                Reto.objects.filter(completado_por__id=usuario_id).values_list('id', flat=True)
+            )
+        else:
+            context['retos_completados_ids'] = []
+
+        return context
 
 
 class RetoDetailView(DetailView):
@@ -110,6 +146,10 @@ def completar_reto(request, pk):
 
     usuario = get_object_or_404(Usuario, id=usuario_id)
     reto = get_object_or_404(Reto, id=pk)
+    hoy = timezone.localdate()
+
+    if hoy < reto.fecha_inicio or hoy > reto.fecha_fin:
+        return JsonResponse({'ok': False, 'mensaje': 'Este reto no está activo esta semana.'})
 
     if reto.completado_por.filter(id=usuario.id).exists():
         return JsonResponse({'ok': False, 'mensaje': 'Ya habías completado este reto.'})

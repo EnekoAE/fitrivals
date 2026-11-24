@@ -29,4 +29,33 @@
             </div>
         {% endfor %}
     </div>
+
+    <h2>Historial de Retos</h2>
+
+    <div class="dashboard-grid">
+        {% for reto in retos_completados %}
+            <div class="info-card">
+                <div>
+                    <span class="points-badge">+{{ reto.puntos_recompensa }} pts</span>
+                    <h3>{{ reto.nombre }}</h3>
+                    {% if reto.descripcion %}
+                        <p>{{ reto.descripcion }}</p>
+                    {% endif %}
+                    <p>
+                        <strong>Completado por:</strong>
+                        {% for atleta in reto.completado_por.all %}
+                            <a href="{% url 'detalle_usuario' atleta.pk %}">{{ atleta.nombre }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <a href="{% url 'detalle_reto' reto.pk %}" class="card-link">
+                    Ver detalle →
+                </a>
+            </div>
+        {% empty %}
+            <div class="info-card">
+                <p>Todavía no se ha completado ningún reto.</p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

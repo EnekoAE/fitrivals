@@ -6,7 +6,12 @@
 <p><a href="{% url 'lista_retos' %}">&larr; Volver a Retos Semanales</a></p>
 
 <div class="hero-card" style="margin-bottom: 2rem;">
-    <span class="points-badge" style="margin-bottom: 0.75rem;">Recompensa: +{{ reto.puntos_recompensa }} pts</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-bottom: 0.75rem;">
+        <span class="badge-orange" style="margin-bottom: 0;">
+            Semana del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F \d\e Y" }}
+        </span>
+        <span class="points-badge" style="margin-bottom: 0;">Recompensa: +{{ reto.puntos_recompensa }} pts</span>
+    </div>
     <h1>{{ reto.nombre }}</h1>
     <p>{{ reto.descripcion }}</p>
 </div>
@@ -45,4 +50,4 @@
         <li>Nadie lo ha completado todavía.</li>
     {% endfor %}
 </ul>
-{% endblock %}
+{% endblock %} 
