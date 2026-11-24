@@ -1,16 +1,19 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Detalle de Ejercicio</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-</head>
-<body>
-    <h1>{{ ejercicio.nombre }}</h1>
-    <p><strong>Grupo Muscular:</strong> {{ ejercicio.grupo_muscular }}</p>
-    <p><strong>Dificultad:</strong> {{ ejercicio.dificultad }}</p>
-    <p><a href="{% url 'lista_ejercicios' %}">← Volver al Catálogo</a></p>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}{{ ejercicio.nombre }} | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="hero-card">
+        <span class="badge-orange">{{ ejercicio.grupo_muscular }}</span>
+        <h1>{{ ejercicio.nombre }}</h1>
+
+        <div class="meta-datos">
+            <span><strong>Grupo Muscular:</strong> {{ ejercicio.grupo_muscular }}</span>
+            <span><strong>Dificultad:</strong> {{ ejercicio.dificultad }}</span>
+        </div>
+    </div>
+
+    <div class="detalle-acciones">
+        <a href="{% url 'lista_ejercicios' %}" class="btn-secondary-strava">← Volver al Catálogo</a>
+    </div>
+{% endblock %}

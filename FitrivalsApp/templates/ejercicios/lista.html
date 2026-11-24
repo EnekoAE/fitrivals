@@ -1,24 +1,29 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Lista de Ejercicios</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-</head>
-<body>
-    <h1>Catálogo de Ejercicios</h1>
-    <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
-    <ul>
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Ejercicios | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Catálogo de Ejercicios</h1>
+        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+    </div>
+
+    <div class="dashboard-grid">
         {% for ejercicio in ejercicios %}
-            <li>
-                <a href="{% url 'detalle_ejercicio' ejercicio.pk %}">{{ ejercicio.nombre }}</a> 
-                ({{ ejercicio.grupo_muscular }} - {{ ejercicio.dificultad }})
-            </li>
+            <div class="info-card">
+                <div>
+                    <span class="points-badge">{{ ejercicio.grupo_muscular }}</span>
+                    <h3>{{ ejercicio.nombre }}</h3>
+                    <p><strong>Dificultad:</strong> {{ ejercicio.dificultad }}</p>
+                </div>
+                <a href="{% url 'detalle_ejercicio' ejercicio.pk %}" class="card-link">
+                    Ver detalle →
+                </a>
+            </div>
         {% empty %}
-            <li>No hay ejercicios registrados.</li>
+            <div class="info-card">
+                <p>No hay ejercicios registrados.</p>
+            </div>
         {% endfor %}
-    </ul>
-</body>
-</html>
+    </div>
+{% endblock %}  
