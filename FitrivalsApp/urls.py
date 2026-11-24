@@ -25,4 +25,8 @@ urlpatterns = [
     path('retos/', views.RetoListView.as_view(), name='lista_retos'),
     path('retos/<int:pk>/', views.RetoDetailView.as_view(), name='detalle_reto'),
     path('retos/<int:pk>/completar/', views.completar_reto, name='completar_reto'),
+
+
+    path('entrenamientos/nuevo/', views.crear_entrenamiento, name='crear_entrenamiento'),
+    path('retos/<int:pk>/completar/', views.completar_reto, name='completar_reto'),
 ]

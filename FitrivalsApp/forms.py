@@ -1,5 +1,6 @@
 from django import forms
 from .models import Usuario
+from .models import Entrenamiento
 
 
 class RegistroUsuarioForm(forms.ModelForm):
@@ -45,3 +46,15 @@ class LoginUsuarioForm(forms.Form):
             'required': True,
         })
     )
+class EntrenamientoForm(forms.ModelForm):
+    class Meta:
+        model = Entrenamiento
+        fields = ['duracion_minutos', 'notas']
+        labels = {
+            'duracion_minutos': 'Duración (minutos)',
+            'notas': 'Notas de la sesión',
+        }
+        widgets = {
+            'duracion_minutos': forms.NumberInput(attrs={'min': 1, 'placeholder': 'Ej: 45'}),
+            'notas': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Sensaciones, rutina del día...'}),
+        }

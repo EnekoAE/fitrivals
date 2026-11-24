@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
-from .models import Usuario, Ejercicio, Entrenamiento, Reto
-from .forms import RegistroUsuarioForm, LoginUsuarioForm
+from .models import Usuario, Ejercicio, Entrenamiento, Reto,  EntrenamientoEjercicio
+from .forms import RegistroUsuarioForm, LoginUsuarioForm, EntrenamientoForm
 
 
 # Página Principal
@@ -123,3 +123,84 @@ def completar_reto(request, pk):
         'mensaje': f'¡Genial! Has ganado +{reto.puntos_recompensa} puntos.',
         'puntos_totales': usuario.puntos,
     })
+def crear_entrenamiento(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_usuario')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    ejercicios = Ejercicio.objects.all()
+
+    if request.method == 'POST':
+        form = EntrenamientoForm(request.POST)
+        if form.is_valid():
+            entrenamiento = form.save(commit=False)
+            entrenamiento.usuario = usuario
+            entrenamiento.reto = None  # Entrenamiento libre: no suma puntos
+            entrenamiento.save()
+
+            # Guardamos los ejercicios añadidos en el formulario
+            ejercicios_ids = request.POST.getlist('ejercicio')
+            series_list = request.POST.getlist('series')
+            reps_list = request.POST.getlist('repeticiones')
+            pesos_list = request.POST.getlist('peso_kg')
+
+            for ej_id, series, reps, peso in zip(ejercicios_ids, series_list, reps_list, pesos_list):
+                if ej_id:
+                    EntrenamientoEjercicio.objects.create(
+                        entrenamiento=entrenamiento,
+                        ejercicio_id=int(ej_id),
+                        series=int(series or 3),
+                        repeticiones=int(reps or 10),
+                        peso_kg=float(peso or 0)
+                    )
+
+            return redirect('detalle_entrenamiento', pk=entrenamiento.pk)
+    else:
+        form = EntrenamientoForm()
+
+    return render(request, 'entrenamientos/crear.html', {
+        'form': form,
+        'ejercicios': ejercicios
+    })
+def completar_reto(request, pk):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_usuario')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    reto = get_object_or_404(Reto, pk=pk)
+
+    if request.method == 'POST':
+        duracion = int(request.POST.get('duracion_minutos', 30))
+        notas = request.POST.get('notas', '')
+
+        # 1. Creamos el entrenamiento asociado al reto
+        entrenamiento = Entrenamiento.objects.create(
+            usuario=usuario,
+            reto=reto,
+            duracion_minutos=duracion,
+            notas=notas or f"Reto superado: {reto.nombre}"
+        )
+
+        # 2. Guardamos las marcas de cada ejercicio que pide el reto
+        for ejercicio in reto.ejercicios.all():
+            series = int(request.POST.get(f'series_{ejercicio.id}', 3))
+            reps = int(request.POST.get(f'reps_{ejercicio.id}', 10))
+            peso = float(request.POST.get(f'peso_{ejercicio.id}', 0))
+
+            EntrenamientoEjercicio.objects.create(
+                entrenamiento=entrenamiento,
+                ejercicio=ejercicio,
+                series=series,
+                repeticiones=reps,
+                peso_kg=peso
+            )
+
+        # 3. Sumamos los puntos del reto al usuario
+        usuario.puntos += reto.puntuacion
+        usuario.save()
+
+        return redirect('detalle_entrenamiento', pk=entrenamiento.pk)
+
+    return render(request, 'retos/completar.html', {'reto': reto})

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Entrenamiento | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Registrar Entrenamiento Libre</h1>
+        <a href="{% url 'lista_entrenamientos' %}" class="btn-secondary-strava">← Cancelar</a>
+    </div>
+
+    <div class="form-card">
+        <p><span class="points-badge">Sesión libre · 0 pts</span> Registra tu rutina diaria sin vincularla a un reto.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+            <h3>Ejercicios realizados</h3>
+            <div id="contenedor-ejercicios">
+                <div class="fila-ejercicio form-group">
+                    <label>Ejercicio</label>
+                    <select name="ejercicio" required>
+                        <option value="">-- Selecciona un ejercicio --</option>
+                        {% for ej in ejercicios %}
+                            <option value="{{ ej.id }}">{{ ej.nombre }} ({{ ej.grupo_muscular }})</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="meta-datos">
+                        <div>
+                            <label>Series</label>
+                            <input type="number" name="series" value="3" min="1" required>
+                        </div>
+                        <div>
+                            <label>Repeticiones</label>
+                            <input type="number" name="repeticiones" value="10" min="1" required>
+                        </div>
+                        <div>
+                            <label>Peso (kg)</label>
+                            <input type="number" name="peso_kg" value="0" min="0" step="0.5" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detalle-acciones">
+                <button type="button" id="btn-add-ejercicio" class="btn-secondary-strava">+ Añadir otro ejercicio</button>
+                <button type="submit" class="btn-primary-strava">Guardar Entrenamiento</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#btn-add-ejercicio').click(function() {
+            const nuevaFila = $('.fila-ejercicio').first().clone();
+            nuevaFila.find('select').val('');
+            nuevaFila.find('input[name="peso_kg"]').val('0');
+            $('#contenedor-ejercicios').append(nuevaFila);
+        });
+    });
+</script>
+{% endblock %}

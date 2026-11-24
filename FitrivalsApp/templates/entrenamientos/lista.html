@@ -5,16 +5,26 @@
 {% block content %}
     <div class="section-header">
         <h1>Historial de Entrenamientos</h1>
-        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+        <div class="hero-actions">
+            {% if request.session.usuario_id %}
+                <a href="{% url 'crear_entrenamiento' %}" class="btn-primary-strava">+ Registrar Entrenamiento</a>
+            {% endif %}
+            <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+        </div>
     </div>
 
     <div class="dashboard-grid">
         {% for entrenamiento in entrenamientos %}
             <div class="info-card">
                 <div>
-                    <span class="points-badge">{{ entrenamiento.duracion_minutos }} min</span>
+                    {% if entrenamiento.reto %}
+                        <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }} (+{{ entrenamiento.reto.puntuacion }} pts)</span>
+                    {% else %}
+                        <span class="points-badge">Entrenamiento libre · {{ entrenamiento.duracion_minutos }} min</span>
+                    {% endif %}
+
                     <h3>{{ entrenamiento.usuario.nombre }}</h3>
-                    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }}</p>
+                    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
                     {% if entrenamiento.notas %}
                         <p>{{ entrenamiento.notas }}</p>
                     {% endif %}
