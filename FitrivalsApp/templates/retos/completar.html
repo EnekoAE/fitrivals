@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Completar Reto | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Completar Reto: {{ reto.nombre }}</h1>
+        <a href="{% url 'detalle_reto' reto.pk %}" class="btn-secondary-strava">← Volver al Reto</a>
+    </div>
+
+    <div id="mensaje-ajax" style="display: none; padding: 0.9rem 1.1rem; margin-bottom: 1.25rem; border-radius: 6px; font-weight: 600;"></div>
+
+    <div class="form-card">
+        <span class="badge-orange">Recompensa: +{{ reto.puntos_recompensa }} puntos</span>
+        <p>{{ reto.descripcion }}</p>
+
+        <form id="form-completar-reto" method="post" action="{% url 'completar_reto' reto.pk %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="duracion_minutos">Tiempo total empleado (minutos)</label>
+                <input type="number" id="duracion_minutos" name="duracion_minutos" value="30" min="1" required>
+            </div>
+
+            <h3>Introduce tus marcas en los ejercicios del reto</h3>
+            {% for ejercicio in reto.ejercicios.all %}
+                <div class="form-group">
+                    <label><strong>{{ ejercicio.nombre }}</strong> ({{ ejercicio.get_grupo_muscular_display }})</label>
+                    <div class="meta-datos">
+                        <div>
+                            <label>Series</label>
+                            <input type="number" name="series_{{ ejercicio.id }}" value="3" min="1" required>
+                        </div>
+                        <div>
+                            <label>Repeticiones</label>
+                            <input type="number" name="reps_{{ ejercicio.id }}" value="10" min="1" required>
+                        </div>
+                        <div>
+                            <label>Peso (kg)</label>
+                            <input type="number" name="peso_{{ ejercicio.id }}" value="0" min="0" step="0.5" required>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Este reto no tiene ejercicios específicos asociados.</p>
+            {% endfor %}
+
+            <div class="form-group">
+                <label for="notas">Notas o sensaciones del reto</label>
+                <textarea id="notas" name="notas" rows="2" placeholder="Ej: Completado sin descanso..."></textarea>
+            </div>
+
+            <button type="submit" id="btn-guardar-reto" class="btn-primary-strava">
+                Registrar Entrenamiento y Sumar {{ reto.puntos_recompensa }} pts
+            </button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('#form-completar-reto').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var boton = $('#btn-guardar-reto');
+        boton.prop('disabled', true).text('Guardando...');
+
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: form.serialize(),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(datos) {
+                var caja = $('#mensaje-ajax');
+                if (datos.ok) {
+                    caja.css({'background-color': '#ECFDF5', 'color': '#065F46', 'border': '1px solid #A7F3D0'});
+                    caja.text(datos.mensaje).fadeIn();
+                    setTimeout(function() {
+                        window.location.href = datos.redirect_url;
+                    }, 1200);
+                } else {
+                    boton.prop('disabled', false).text('Registrar Entrenamiento');
+                    caja.css({'background-color': '#FEF2F2', 'color': '#B91C1C', 'border': '1px solid #FECACA'});
+                    caja.text(datos.mensaje).fadeIn();
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

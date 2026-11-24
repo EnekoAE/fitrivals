@@ -1,10 +1,12 @@
+from datetime import date
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from django.utils import timezone
-from .models import Usuario, Ejercicio, Entrenamiento, Reto
-from .forms import RegistroUsuarioForm, LoginUsuarioForm
+from django.db.models import Q
+from .models import Usuario, Ejercicio, Entrenamiento, Reto, EntrenamientoEjercicio
+from .forms import RegistroUsuarioForm, LoginUsuarioForm, EntrenamientoForm
 
 
 # Página Principal
@@ -79,13 +81,13 @@ def detalle_ejercicio(request, pk):
     return render(request, 'ejercicios/detalle.html', {'ejercicio': ejercicio})
 
 
-# Vistas de Entrenamientos
+# Vistas de Entrenamientos + Historial de Retos
 def lista_entrenamientos(request):
     entrenamientos = Entrenamiento.objects.select_related('usuario').order_by('-fecha')
     retos_completados = (
-        Reto.objects.filter(completado_por__isnull=False)
+        Reto.objects.filter(Q(completado_por__isnull=False) | Q(intentos__isnull=False))
         .distinct()
-        .prefetch_related('completado_por')
+        .prefetch_related('completado_por', 'intentos__usuario')
     )
     return render(request, 'entrenamientos/lista.html', {
         'entrenamientos': entrenamientos,
@@ -124,7 +126,9 @@ class RetoListView(ListView):
         usuario_id = self.request.session.get('usuario_id')
         if usuario_id:
             context['retos_completados_ids'] = list(
-                Reto.objects.filter(completado_por__id=usuario_id).values_list('id', flat=True)
+                Reto.objects.filter(
+                    Q(completado_por__id=usuario_id) | Q(intentos__usuario_id=usuario_id)
+                ).values_list('id', flat=True).distinct()
             )
         else:
             context['retos_completados_ids'] = []
@@ -138,28 +142,99 @@ class RetoDetailView(DetailView):
     context_object_name = 'reto'
 
 
-# Vista AJAX para completar reto semanal y sumar puntos (Opción 1 E4a)
+# FLUJO 1: Crear entrenamiento libre (NO es reto, NO suma puntos)
+def crear_entrenamiento(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_usuario')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    ejercicios = Ejercicio.objects.all()
+
+    if request.method == 'POST':
+        form = EntrenamientoForm(request.POST)
+        if form.is_valid():
+            entrenamiento = form.save(commit=False)
+            entrenamiento.usuario = usuario
+            entrenamiento.reto = None
+            entrenamiento.fecha = date.today()
+            entrenamiento.save()
+
+            ejercicios_ids = request.POST.getlist('ejercicio')
+            series_list = request.POST.getlist('series')
+            reps_list = request.POST.getlist('repeticiones')
+            pesos_list = request.POST.getlist('peso_kg')
+
+            for ej_id, series, reps, peso in zip(ejercicios_ids, series_list, reps_list, pesos_list):
+                if ej_id:
+                    EntrenamientoEjercicio.objects.create(
+                        entrenamiento=entrenamiento,
+                        ejercicio_id=int(ej_id),
+                        series=int(series or 3),
+                        repeticiones=int(reps or 10),
+                        peso_kg=float(peso or 0)
+                    )
+
+            return redirect('detalle_entrenamiento', pk=entrenamiento.pk)
+    else:
+        form = EntrenamientoForm()
+
+    return render(request, 'entrenamientos/crear.html', {
+        'form': form,
+        'ejercicios': ejercicios
+    })
+
+
+# FLUJO 2: Completar un reto (CREA entrenamiento vinculado, SÍ suma puntos y soporta AJAX)
 def completar_reto(request, pk):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
-        return JsonResponse({'ok': False, 'mensaje': 'Inicia sesión para sumar puntos.'})
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'mensaje': 'Inicia sesión para completar retos.'})
+        return redirect('login_usuario')
 
     usuario = get_object_or_404(Usuario, id=usuario_id)
-    reto = get_object_or_404(Reto, id=pk)
-    hoy = timezone.localdate()
+    reto = get_object_or_404(Reto, pk=pk)
 
-    if hoy < reto.fecha_inicio or hoy > reto.fecha_fin:
-        return JsonResponse({'ok': False, 'mensaje': 'Este reto no está activo esta semana.'})
+    if request.method == 'POST':
+        duracion = int(request.POST.get('duracion_minutos', 30))
+        notas = request.POST.get('notas', '')
 
-    if reto.completado_por.filter(id=usuario.id).exists():
-        return JsonResponse({'ok': False, 'mensaje': 'Ya habías completado este reto.'})
+        # 1. Creamos el entrenamiento asociado al reto
+        entrenamiento = Entrenamiento.objects.create(
+            usuario=usuario,
+            reto=reto,
+            fecha=date.today(),
+            duracion_minutos=duracion,
+            notas=notas or f"Reto superado: {reto.nombre}"
+        )
 
-    reto.completado_por.add(usuario)
-    usuario.puntos += reto.puntos_recompensa
-    usuario.save()
+        # 2. Guardamos las marcas de cada ejercicio del reto
+        for ejercicio in reto.ejercicios.all():
+            series = int(request.POST.get(f'series_{ejercicio.id}', 3))
+            reps = int(request.POST.get(f'reps_{ejercicio.id}', 10))
+            peso = float(request.POST.get(f'peso_{ejercicio.id}', 0))
 
-    return JsonResponse({
-        'ok': True,
-        'mensaje': f'¡Genial! Has ganado +{reto.puntos_recompensa} puntos.',
-        'puntos_totales': usuario.puntos,
-    })
+            EntrenamientoEjercicio.objects.create(
+                entrenamiento=entrenamiento,
+                ejercicio=ejercicio,
+                series=series,
+                repeticiones=reps,
+                peso_kg=peso
+            )
+
+        # 3. Marcamos completado y sumamos los puntos del reto al usuario
+        reto.completado_por.add(usuario)
+        usuario.puntos += reto.puntos_recompensa
+        usuario.save()
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'ok': True,
+                'mensaje': f'¡Reto registrado! Has ganado +{reto.puntos_recompensa} puntos (Total: {usuario.puntos} pts).',
+                'redirect_url': f'/entrenamientos/{entrenamiento.pk}/'
+            })
+
+        return redirect('detalle_entrenamiento', pk=entrenamiento.pk)
+
+    return render(request, 'retos/completar.html', {'reto': reto})

@@ -5,16 +5,18 @@
 {% block content %}
 <span class="badge-orange">DESAFÍOS DE LA SEMANA</span>
 <h1>Retos Semanales</h1>
-<p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-    Cada semana se activan nuevos desafíos temáticos. Complétalos dentro de sus fechas para sumar puntos en el ranking.
+<p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+    Cada semana se activan nuevos desafíos temáticos. Complétalos dentro de sus fechas para registrar tu entrenamiento y sumar puntos.
 </p>
 
-<div id="mensaje-ajax" style="display: none; padding: 0.8rem 1rem; margin-bottom: 1.25rem; border-radius: 6px; font-weight: 600;"></div>
+<div class="form-group" style="max-width: 400px; margin-bottom: 1.5rem;">
+    <input type="text" id="buscador-retos" placeholder="Filtrar retos por nombre o ejercicio...">
+</div>
 
 <h2>Retos de esta semana</h2>
 <div class="dashboard-grid">
     {% for reto in retos_activos %}
-    <article class="info-card">
+    <article class="info-card tarjeta-reto">
         <div>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
                 <span class="badge-orange" style="margin-bottom: 0;">
@@ -42,16 +44,13 @@
 
         <div style="display: flex; gap: 0.5rem;">
             {% if reto.id in retos_completados_ids %}
-                <button type="button" class="btn-primary-strava" disabled style="flex: 1; background-color: #16a34a;">
+                <a href="{% url 'completar_reto' reto.pk %}" class="btn-primary-strava" style="flex: 1; background-color: #16a34a;">
                     Completado (+{{ reto.puntos_recompensa }} pts)
-                </button>
+                </a>
             {% else %}
-                <button type="button"
-                        class="btn-primary-strava btn-completar"
-                        data-url="{% url 'completar_reto' reto.pk %}"
-                        style="flex: 1;">
-                    ¡He completado el reto!
-                </button>
+                <a href="{% url 'completar_reto' reto.pk %}" class="btn-primary-strava" style="flex: 1;">
+                    Completar reto
+                </a>
             {% endif %}
             <a href="{% url 'detalle_reto' reto.pk %}" class="btn-secondary-strava">Ver</a>
         </div>
@@ -67,7 +66,7 @@
 <h2>Próximos retos</h2>
 <div class="dashboard-grid">
     {% for reto in retos_proximos %}
-    <article class="info-card">
+    <article class="info-card tarjeta-reto">
         <div>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
@@ -88,7 +87,7 @@
 <h2>Retos de semanas anteriores</h2>
 <div class="dashboard-grid">
     {% for reto in retos_pasados %}
-    <article class="info-card">
+    <article class="info-card tarjeta-reto">
         <div>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
@@ -109,23 +108,14 @@
 {% block extra_js %}
 <script>
 $(document).ready(function() {
-    $('.btn-completar').click(function() {
-        var boton = $(this);
-        var url = boton.data('url');
-
-        $.ajax({
-            url: url,
-            type: 'POST',
-            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-            success: function(datos) {
-                var caja = $('#mensaje-ajax');
-                if (datos.ok) {
-                    boton.prop('disabled', true).css('background-color', '#16a34a').text('Completado (+puntos)');
-                    caja.css({'background-color': '#ECFDF5', 'color': '#065F46', 'border': '1px solid #A7F3D0'});
-                } else {
-                    caja.css({'background-color': '#FEF2F2', 'color': '#B91C1C', 'border': '1px solid #FECACA'});
-                }
-                caja.text(datos.mensaje).fadeIn();
+    $('#buscador-retos').on('keyup', function() {
+        var texto = $(this).val().toLowerCase();
+        $('.tarjeta-reto').each(function() {
+            var contenido = $(this).text().toLowerCase();
+            if (contenido.indexOf(texto) > -1) {
+                $(this).fadeIn(150);
+            } else {
+                $(this).fadeOut(150);
             }
         });
     });

@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Entrenamientos
     path('entrenamientos/', views.lista_entrenamientos, name='lista_entrenamientos'),
+    path('entrenamientos/nuevo/', views.crear_entrenamiento, name='crear_entrenamiento'),
     path('entrenamientos/<int:pk>/', views.detalle_entrenamiento, name='detalle_entrenamiento'),
 
     # Retos Semanales

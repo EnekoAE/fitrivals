@@ -41,6 +41,7 @@ class Ejercicio(models.Model):
 class Entrenamiento(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='entrenamientos')
     fecha = models.DateField()
+    reto = models.ForeignKey("reto", on_delete=models.SET_NULL, null=True, blank=True, related_name="intentos")
     duracion_minutos = models.PositiveIntegerField(help_text="Duración en minutos")
     notas = models.TextField(blank=True, null=True)
     ejercicios = models.ManyToManyField(Ejercicio, through='EntrenamientoEjercicio')
