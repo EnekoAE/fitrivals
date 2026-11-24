@@ -12,9 +12,9 @@
         {% for ejercicio in ejercicios %}
             <div class="info-card">
                 <div>
-                    <span class="points-badge">{{ ejercicio.grupo_muscular }}</span>
+                    <span class="points-badge">{{ ejercicio.get_grupo_muscular_display }}</span>
                     <h3>{{ ejercicio.nombre }}</h3>
-                    <p><strong>Dificultad:</strong> {{ ejercicio.dificultad }}</p>
+                    <p><strong>Dificultad:</strong> {{ ejercicio.get_dificultad_display }}</p>
                 </div>
                 <a href="{% url 'detalle_ejercicio' ejercicio.pk %}" class="card-link">
                     Ver detalle →

@@ -1,38 +1,40 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Detalle de Usuario</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-</head>
-<body>
-    <h1>{{ usuario.nombre }}</h1>
-    <p><strong>Email:</strong> {{ usuario.email }}</p>
-    <p><strong>Fecha de Alta:</strong> {{ usuario.fecha_alta }}</p>
-    <p><strong>Puntos de Gamificación:</strong> {{ usuario.puntos }} pts</p>
+{% extends 'base.html' %}
 
-    <h3>Historial de Entrenamientos</h3>
-    <ul>
-        {% for entrenamiento in usuario.entrenamientos.all %}
-            <li>
-                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}">
-                    Entrenamiento del {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)
-                </a>
-            </li>
+{% block title %}{{ usuario.nombre }} | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="hero-card">
+        <span class="badge-orange">Perfil de atleta</span>
+        <h1>{{ usuario.nombre }}</h1>
+        <div class="meta-datos">
+            {% if request.session.usuario_id == usuario.id %}
+                <span><strong>Email:</strong> {{ usuario.email }}</span>
+            {% endif %}
+            <span><strong>Miembro desde:</strong> {{ usuario.fecha_alta }}</span>
+            <span><strong>Puntos:</strong> {{ usuario.puntos }} pts</span>
+        </div>
+    </div>
+
+    <h2>Historial de entrenamientos</h2>
+    <div class="dashboard-grid">
+        {% for entrenamiento in entrenamientos %}
+            <div class="info-card">
+                <div>
+                    {% if entrenamiento.reto %}
+                        <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }}</span>
+                    {% else %}
+                        <span class="points-badge">Entrenamiento libre</span>
+                    {% endif %}
+                    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
+                </div>
+                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">Ver detalle →</a>
+            </div>
         {% empty %}
-            <li>Este usuario aún no tiene entrenamientos registrados.</li>
+            <div class="info-card"><p>Este atleta aún no tiene entrenamientos registrados.</p></div>
         {% endfor %}
-    </ul>
+    </div>
 
     <div class="detalle-acciones">
-        {% if request.session.usuario_id == usuario.id %}
-            <a href="{% url 'index' %}" class="btn-primary">Volver al inicio</a>
-            <a href="{% url 'lista_usuarios' %}" class="btn-secondary">Ver lista de amigos</a>
-        {% else %}
-            <a href="{% url 'lista_usuarios' %}" class="btn-primary">Volver a usuarios</a>
-        {% endif %}
+        <a href="{% url 'lista_usuarios' %}" class="btn-secondary-strava">← Volver a atletas</a>
     </div>
-</body>
-</html>
+{% endblock %}

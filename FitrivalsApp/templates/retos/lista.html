@@ -44,9 +44,9 @@
 
         <div style="display: flex; gap: 0.5rem;">
             {% if reto.id in retos_completados_ids %}
-                <a href="{% url 'completar_reto' reto.pk %}" class="btn-primary-strava" style="flex: 1; background-color: #16a34a;">
-                    Completado (+{{ reto.puntos_recompensa }} pts)
-                </a>
+                <span class="btn-primary-strava" style="flex: 1; background-color: #16a34a; cursor: default;">
+                    ✔ Completado (+{{ reto.puntos_recompensa }} pts)
+                </span>
             {% else %}
                 <a href="{% url 'completar_reto' reto.pk %}" class="btn-primary-strava" style="flex: 1;">
                     Completar reto

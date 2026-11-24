@@ -28,6 +28,9 @@
                 <a href="{% url 'lista_ejercicios' %}" class="{% if 'ejercicio' in request.resolver_match.url_name %}activo{% endif %}">
                     Ejercicios
                 </a>
+                <a href="{% url 'lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' or request.resolver_match.url_name == 'detalle_usuario' %}activo{% endif %}">
+                    Atletas
+                </a>
             </nav>
 
             <div class="header-user-actions">
@@ -36,9 +39,10 @@
                         <span class="user-avatar-dot"></span>
                         {{ request.session.usuario_nombre }}
                     </a>
-                    <a href="{% url 'logout_usuario' %}" class="btn-secondary-nav">
-                        Cerrar sesión
-                    </a>
+                    <form method="post" action="{% url 'logout_usuario' %}" class="form-logout">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary-nav">Cerrar sesión</button>
+                    </form>
                 {% else %}
                     <a href="{% url 'registro_usuario' %}" class="btn-secondary-nav">
                         Crear cuenta
@@ -52,6 +56,13 @@
     </header>
 
     <main class="main-wrapper">
+        {% if messages %}
+            <ul class="mensajes">
+                {% for message in messages %}
+                    <li class="mensaje mensaje-{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>

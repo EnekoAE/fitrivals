@@ -3,6 +3,14 @@ from django.db import models
 from django.utils import timezone
 
 
+def inicio_semana():
+    hoy = timezone.localdate()
+    return hoy - datetime.timedelta(days=hoy.weekday())
+
+
+def fin_semana():
+    return inicio_semana() + datetime.timedelta(days=6)
+
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
@@ -30,6 +38,7 @@ class Ejercicio(models.Model):
         ('AVANZADO', 'Avanzado'),
     ]
 
+    descripcion = models.TextField(blank=True, default='')
     nombre = models.CharField(max_length=100)
     grupo_muscular = models.CharField(max_length=20, choices=GRUPOS_MUSCULARES)
     dificultad = models.CharField(max_length=20, choices=DIFICULTAD_CHOICES)
@@ -41,10 +50,10 @@ class Ejercicio(models.Model):
 class Entrenamiento(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='entrenamientos')
     fecha = models.DateField()
-    reto = models.ForeignKey("reto", on_delete=models.SET_NULL, null=True, blank=True, related_name="intentos")
+    reto = models.ForeignKey("Reto", on_delete=models.SET_NULL, null=True, blank=True, related_name="intentos")
     duracion_minutos = models.PositiveIntegerField(help_text="Duración en minutos")
     notas = models.TextField(blank=True, null=True)
-    ejercicios = models.ManyToManyField(Ejercicio, through='EntrenamientoEjercicio')
+    ejercicios = models.ManyToManyField(Ejercicio, through='EntrenamientoEjercicio')  
 
     def __str__(self):
         return f"Entrenamiento de {self.usuario.nombre} - {self.fecha}"
@@ -65,8 +74,8 @@ class Reto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     puntos_recompensa = models.IntegerField(default=100)
-    fecha_inicio = models.DateField(default=datetime.date(2026, 11, 23))
-    fecha_fin = models.DateField(default=datetime.date(2026, 11, 30))
+    fecha_inicio = models.DateField(default=inicio_semana)
+    fecha_fin = models.DateField(default=fin_semana)
     ejercicios = models.ManyToManyField(Ejercicio, related_name='retos', blank=True)
     completado_por = models.ManyToManyField(Usuario, related_name='retos_completados', blank=True)
 

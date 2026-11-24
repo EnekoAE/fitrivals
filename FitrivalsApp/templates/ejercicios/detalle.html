@@ -4,14 +4,24 @@
 
 {% block content %}
     <div class="hero-card">
-        <span class="badge-orange">{{ ejercicio.grupo_muscular }}</span>
+        <span class="badge-orange">{{ ejercicio.get_grupo_muscular_display }}</span>
         <h1>{{ ejercicio.nombre }}</h1>
 
         <div class="meta-datos">
-            <span><strong>Grupo Muscular:</strong> {{ ejercicio.grupo_muscular }}</span>
-            <span><strong>Dificultad:</strong> {{ ejercicio.dificultad }}</span>
+            <span><strong>Grupo Muscular:</strong> {{ ejercicio.get_grupo_muscular_display }}</span>
+            <span><strong>Dificultad:</strong> {{ ejercicio.get_dificultad_display }}</span>
         </div>
+        {% if ejercicio.descripcion %}<p>{{ ejercicio.descripcion }}</p>{% endif %}
     </div>
+
+    <h2>Retos que incluyen este ejercicio</h2>
+    <ul>
+        {% for reto in ejercicio.retos.all %}
+            <li><a href="{% url 'detalle_reto' reto.pk %}">{{ reto.nombre }}</a></li>
+        {% empty %}
+            <li>Ningún reto incluye este ejercicio todavía.</li>
+        {% endfor %}
+    </ul>
 
     <div class="detalle-acciones">
         <a href="{% url 'lista_ejercicios' %}" class="btn-secondary-strava">← Volver al Catálogo</a>

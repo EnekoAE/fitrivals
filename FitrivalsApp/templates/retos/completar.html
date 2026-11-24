@@ -84,6 +84,12 @@ $(document).ready(function() {
                     caja.css({'background-color': '#FEF2F2', 'color': '#B91C1C', 'border': '1px solid #FECACA'});
                     caja.text(datos.mensaje).fadeIn();
                 }
+            },
+            error: function(xhr) {
+                var msg = (xhr.responseJSON && xhr.responseJSON.mensaje) || 'No se ha podido guardar. Inténtalo de nuevo.';
+                boton.prop('disabled', false).text('Registrar Entrenamiento');
+                $('#mensaje-ajax').css({'background-color': '#FEF2F2', 'color': '#B91C1C', 'border': '1px solid #FECACA'})
+                    .text(msg).fadeIn();
             }
         });
     });

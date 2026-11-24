@@ -1,24 +1,29 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Lista de Usuarios</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-</head>
-<body>
-    <h1>Usuarios Registrados</h1>
-    <p><a href="{% url 'index' %}">← Volver al Índice</a></p>
-    <ul>
-        {% for usuario in usuarios %}
-            <li>
-                <a href="{% url 'detalle_usuario' usuario.pk %}">{{ usuario.nombre }}</a> 
-                ({{ usuario.puntos }} pts)
-            </li>
-        {% empty %}
-            <li>No hay usuarios registrados.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Atletas | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Atletas registrados</h1>
+        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+    </div>
+
+    <div class="strava-table-wrapper">
+        <table class="strava-table">
+            <thead>
+                <tr><th>Posición</th><th>Atleta</th><th>Puntos</th></tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td><strong>#{{ forloop.counter }}</strong></td>
+                    <td><a href="{% url 'detalle_usuario' usuario.pk %}">{{ usuario.nombre }}</a></td>
+                    <td><span class="points-badge">{{ usuario.puntos }} pts</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">No hay usuarios registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

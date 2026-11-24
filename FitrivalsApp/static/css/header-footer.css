@@ -254,3 +254,12 @@
       white-space: nowrap;
     }
   }
+
+
+.form-logout { display: inline; margin: 0; }
+.form-logout button { font-family: inherit; cursor: pointer; }
+
+.mensajes { list-style: none; padding: 0; margin: 0 0 1.25rem; }
+.mensaje { padding: 0.8rem 1.1rem; border-radius: 6px; font-weight: 600; margin-bottom: 0.5rem; }
+.mensaje-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+.mensaje-error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
