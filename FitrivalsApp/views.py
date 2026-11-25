@@ -353,39 +353,9 @@ def detalle_ejercicio(request, pk):
     return render(request, 'ejercicios/detalle.html', {'ejercicio': ejercicio})
 
 
-# Vistas de Entrenamientos + Historial de Retos (totalmente separados y filtrados por círculo activo)
+# Redirige cualquier acceso antiguo de entrenamientos a la pestaña de Círculos
 def lista_entrenamientos(request):
-    usuario_id = request.session.get('usuario_id')
-    if not usuario_id:
-        return redirect('login_usuario')
-
-    yo = get_object_or_404(Usuario, pk=usuario_id)
-    mis_circulos = yo.circulos.all().order_by('nombre')
-    circulo_activo = _obtener_circulo_activo(request, mis_circulos)
-
-    if circulo_activo:
-        miembros = circulo_activo.miembros.all()
-        entrenamientos = (
-            Entrenamiento.objects.filter(usuario__in=miembros, reto__isnull=True)
-            .select_related('usuario')
-            .prefetch_related('entrenamientoejercicio_set__ejercicio')
-            .order_by('-fecha')
-        )
-        retos_completados = (
-            Reto.objects.filter(completado_por__in=miembros)
-            .distinct()
-            .prefetch_related('completado_por')
-        )
-    else:
-        entrenamientos = Entrenamiento.objects.none()
-        retos_completados = Reto.objects.none()
-
-    return render(request, 'entrenamientos/lista.html', {
-        'mis_circulos': mis_circulos,
-        'circulo_activo': circulo_activo,
-        'entrenamientos': entrenamientos,
-        'retos_completados': retos_completados,
-    })
+    return redirect('lista_circulos')
 
 
 def detalle_entrenamiento(request, pk):
@@ -523,4 +493,4 @@ def completar_reto(request, pk):
         messages.success(request, f'¡Reto completado! +{reto.puntos_recompensa} puntos.')
         return redirect('detalle_reto', pk=reto.pk)
 
-    return render(request, 'retos/completar.html', {'reto': reto})
+    return render(request, 'retos/completar.html', {'reto': reto})  

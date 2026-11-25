@@ -22,9 +22,6 @@
                 <a href="{% url 'lista_circulos' %}" class="{% if 'circulo' in request.resolver_match.url_name or 'invitacion' in request.resolver_match.url_name %}activo{% endif %}">
                     Círculos
                 </a>
-                <a href="{% url 'lista_entrenamientos' %}" class="{% if 'entrenamiento' in request.resolver_match.url_name %}activo{% endif %}">
-                    Entrenamientos
-                </a>
                 <a href="{% url 'lista_retos' %}" class="{% if 'reto' in request.resolver_match.url_name %}activo{% endif %}">
                     Retos Semanales
                 </a>

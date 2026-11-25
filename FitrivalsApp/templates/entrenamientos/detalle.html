@@ -1,54 +1,47 @@
 {% extends 'base.html' %}
 
-{% block title %}Detalle de Entrenamiento | Fit Rivals{% endblock %}
+{% block title %}Detalle de Entrenamiento - Fit Rivals{% endblock %}
 
 {% block content %}
-    <div class="hero-card">
-        <span class="badge-orange">Sesión de Entrenamiento</span>
-        <h1>Entrenamiento de {{ entrenamiento.usuario.nombre }}</h1>
+<div class="section-header">
+    <a href="{% url 'lista_circulos' %}" class="btn-secondary-strava">&larr; Volver a Círculos</a>
+    <a href="{% url 'crear_entrenamiento' %}" class="btn-primary-strava">+ Registrar otro entrenamiento</a>
+</div>
 
-        <div class="meta-datos">
-            <span><strong>Fecha:</strong> {{ entrenamiento.fecha }}</span>
-            <span><strong>Duración:</strong> {{ entrenamiento.duracion_minutos }} minutos</span>
-        </div>
+<div class="hero-card" style="margin-bottom: 2rem;">
+    <span class="badge-orange">ENTRENAMIENTO LIBRE · {{ entrenamiento.duracion_minutos }} MIN</span>
+    <h1>Sesión de {{ entrenamiento.usuario.nombre }}</h1>
+    <p style="color: var(--text-muted); margin-bottom: 0.5rem;">
+        Fecha: <strong>{{ entrenamiento.fecha|date:"j \d\e F \d\e Y" }}</strong>
+    </p>
+    <p style="margin-bottom: 0;">{{ entrenamiento.notas|default:"Sin notas registradas." }}</p>
+</div>
 
-        <p><strong>Notas:</strong> {{ entrenamiento.notas|default:"Sin notas" }}</p>
-    </div>
-
-    <h2>Ejercicios Realizados</h2>
-
-    <div class="strava-table-wrapper">
-        <table class="strava-table">
-            <thead>
-                <tr>
-                    <th>Ejercicio</th>
-                    <th>Series</th>
-                    <th>Repeticiones</th>
-                    <th>Peso</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in entrenamiento.entrenamientoejercicio_set.all %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'detalle_ejercicio' item.ejercicio.pk %}">
-                                {{ item.ejercicio.nombre }}
-                            </a>
-                        </td>
-                        <td>{{ item.series }}</td>
-                        <td>{{ item.repeticiones }}</td>
-                        <td><span class="points-badge">{{ item.peso_kg }} kg</span></td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4">No hay ejercicios detallados en esta sesión.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="detalle-acciones">
-        <a href="{% url 'lista_entrenamientos' %}" class="btn-secondary-strava">← Volver a Entrenamientos</a>
-    </div>
+<h2>Ejercicios realizados</h2>
+<div class="strava-table-wrapper">
+    <table class="strava-table">
+        <thead>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Series</th>
+                <th>Repeticiones</th>
+                <th>Peso (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in entrenamiento.entrenamientoejercicio_set.all %}
+            <tr>
+                <td><a href="{% url 'detalle_ejercicio' item.ejercicio.pk %}">{{ item.ejercicio.nombre }}</a></td>
+                <td>{{ item.series }}</td>
+                <td>{{ item.repeticiones }}</td>
+                <td>{{ item.peso_kg }} kg</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No se registraron ejercicios en esta sesión.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
