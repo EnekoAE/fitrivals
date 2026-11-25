@@ -33,7 +33,7 @@
 
     {% if mis_circulos %}
         <div class="section-header" style="margin-top: 2rem;">
-            <h2>Clasificación por Círculo</h2>
+            <h2>Mis Círculos</h2>
             <a href="{% url 'crear_circulo' %}" class="btn-secondary-strava">+ Nuevo círculo</a>
         </div>
 
@@ -74,37 +74,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-
-            <div class="section-header">
-                <h3>Actividad reciente en {{ circulo_activo.nombre }}</h3>
-                <a href="{% url 'detalle_circulo' circulo_activo.pk %}" class="card-link">Gestionar círculo →</a>
-            </div>
-            <div class="dashboard-grid">
-                {% for ent in entrenamientos_circulo %}
-                    <div class="info-card">
-                        <div>
-                            {% if ent.reto %}
-                                <span class="badge-orange">Reto: {{ ent.reto.nombre }}</span>
-                            {% else %}
-                                <span class="points-badge">Entrenamiento libre</span>
-                            {% endif %}
-                            <h4>{{ ent.usuario.nombre }} · {{ ent.fecha }}</h4>
-                            <ul>
-                                {% for item in ent.entrenamientoejercicio_set.all %}
-                                    <li>{{ item.ejercicio.nombre }}: {{ item.series }}x{{ item.repeticiones }} ({{ item.peso_kg }} kg)</li>
-                                {% empty %}
-                                    <li>Sesión sin ejercicios detallados ({{ ent.duracion_minutos }} min).</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <a href="{% url 'detalle_entrenamiento' ent.pk %}" class="card-link">Ver detalle →</a>
-                    </div>
-                {% empty %}
-                    <div class="info-card">
-                        <p>Aún no hay entrenamientos registrados en {{ circulo_activo.nombre }}.</p>
-                    </div>
-                {% endfor %}
             </div>
         {% endif %}
     {% else %}
