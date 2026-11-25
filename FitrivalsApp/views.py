@@ -259,6 +259,22 @@ def detalle_circulo(request, pk):
         .order_by('-fecha')
     )
 
+    miembros_ids = set(circulo.miembros.values_list('id', flat=True))
+    retos_completados = list(
+        Reto.objects.filter(
+            Q(completado_por__id__in=miembros_ids) | Q(intentos__usuario_id__in=miembros_ids)
+        )
+        .distinct()
+        .prefetch_related('completado_por', 'intentos__usuario')
+        .order_by('-fecha_fin')
+    )
+    for reto in retos_completados:
+        atletas = {u for u in reto.completado_por.all() if u.id in miembros_ids}
+        for intento in reto.intentos.all():
+            if intento.usuario_id in miembros_ids:
+                atletas.add(intento.usuario)
+        reto.completado_por_circulo = sorted(atletas, key=lambda u: u.nombre)
+
     es_anfitrion = (circulo.anfitrion_id == yo.pk)
     atletas_disponibles = []
     invitaciones_enviadas = []
@@ -275,6 +291,7 @@ def detalle_circulo(request, pk):
         'circulo': circulo,
         'ranking': ranking,
         'entrenamientos': entrenamientos,
+        'retos_completados': retos_completados,
         'es_anfitrion': es_anfitrion,
         'atletas_disponibles': atletas_disponibles,
         'invitaciones_enviadas': invitaciones_enviadas,
@@ -394,8 +411,9 @@ class RetoListView(ListView):
         usuario_id = self.request.session.get('usuario_id')
         if usuario_id:
             context['retos_completados_ids'] = list(
-                Reto.objects.filter(completado_por__id=usuario_id)
-                .values_list('id', flat=True).distinct()
+                Reto.objects.filter(
+                    Q(completado_por__id=usuario_id) | Q(intentos__usuario_id=usuario_id)
+                ).values_list('id', flat=True).distinct()
             )
         else:
             context['retos_completados_ids'] = []
@@ -405,9 +423,38 @@ class RetoListView(ListView):
 
 class RetoDetailView(DetailView):
     model = Reto
-    queryset = Reto.objects.prefetch_related('ejercicios', 'completado_por')
+    queryset = Reto.objects.prefetch_related(
+        'ejercicios',
+        'completado_por',
+        'intentos__usuario',
+        'intentos__entrenamientoejercicio_set__ejercicio',
+    )
     template_name = 'retos/detalle.html'
     context_object_name = 'reto'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        reto = self.object
+
+        intentos_por_usuario = {
+            intento.usuario_id: intento for intento in reto.intentos.all()
+        }
+        usuarios_dict = {u.id: u for u in reto.completado_por.all()}
+        for uid, intento in intentos_por_usuario.items():
+            usuarios_dict[uid] = intento.usuario
+
+        participaciones = []
+        for u in sorted(usuarios_dict.values(), key=lambda x: (-x.puntos, x.nombre)):
+            intento = intentos_por_usuario.get(u.id)
+            marcas = list(intento.entrenamientoejercicio_set.all()) if intento else []
+            participaciones.append({
+                'usuario': u,
+                'intento': intento,
+                'marcas': marcas,
+            })
+
+        context['participaciones'] = participaciones
+        return context
 
 
 # FLUJO 1: Crear entrenamiento libre (NO es reto, NO suma puntos)
@@ -454,7 +501,7 @@ def crear_entrenamiento(request):
     })
 
 
-# FLUJO 2: Completar un reto (NO crea entrenamiento, SÍ suma puntos y soporta AJAX)
+# FLUJO 2: Completar un reto (guarda tiempo y pesos del intento, suma puntos y soporta AJAX)
 def _rechazar(request, reto, mensaje, status=400):
     if _es_ajax(request):
         return JsonResponse({'ok': False, 'mensaje': mensaje}, status=status)
@@ -474,11 +521,32 @@ def completar_reto(request, pk):
 
     if reto.estado_semana != 'ACTIVO':
         return _rechazar(request, reto, 'Este reto no está activo esta semana.')
-    if reto.completado_por.filter(pk=usuario.pk).exists():
+    if reto.completado_por.filter(pk=usuario.pk).exists() \
+            or Entrenamiento.objects.filter(usuario=usuario, reto=reto).exists():
         return _rechazar(request, reto, 'Ya has completado este reto.')
 
     if request.method == 'POST':
+        duracion = _entero(request.POST.get('duracion_minutos'), 30)
+        notas = request.POST.get('notas', '')[:2000]
+
         with transaction.atomic():
+            entrenamiento = Entrenamiento.objects.create(
+                usuario=usuario,
+                reto=reto,
+                fecha=timezone.localdate(),
+                duracion_minutos=duracion,
+                notas=notas or f"Reto superado: {reto.nombre}",
+            )
+
+            for ejercicio in reto.ejercicios.all():
+                EntrenamientoEjercicio.objects.create(
+                    entrenamiento=entrenamiento,
+                    ejercicio=ejercicio,
+                    series=_entero(request.POST.get(f'series_{ejercicio.id}'), 3),
+                    repeticiones=_entero(request.POST.get(f'reps_{ejercicio.id}'), 10),
+                    peso_kg=_decimal(request.POST.get(f'peso_{ejercicio.id}')),
+                )
+
             reto.completado_por.add(usuario)
             Usuario.objects.filter(pk=usuario.pk).update(puntos=F('puntos') + reto.puntos_recompensa)
 
@@ -493,4 +561,4 @@ def completar_reto(request, pk):
         messages.success(request, f'¡Reto completado! +{reto.puntos_recompensa} puntos.')
         return redirect('detalle_reto', pk=reto.pk)
 
-    return render(request, 'retos/completar.html', {'reto': reto})  
+    return render(request, 'retos/completar.html', {'reto': reto})
