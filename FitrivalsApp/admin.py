@@ -12,6 +12,11 @@ class EntrenamientoEjercicioInline(admin.TabularInline):
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'email', 'puntos', 'fecha_alta')
     search_fields = ('nombre', 'email')
+    def get_readonly_fields(self, request, obj=None):
+        # Si el usuario ya existe (obj != None), bloqueamos la contraseña como solo lectura
+        if obj:
+            return ('password',)
+        return ()
 
     def save_model(self, request, obj, form, change):
         # Si la contraseña no tiene formato cifrado de Django, la encriptamos antes de guardar
