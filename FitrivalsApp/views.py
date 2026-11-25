@@ -146,27 +146,20 @@ def detalle_ejercicio(request, pk):
     return render(request, 'ejercicios/detalle.html', {'ejercicio': ejercicio})
 
 
-# Vistas de Entrenamientos + Historial de Retos
 def lista_entrenamientos(request):
-    entrenamientos = Entrenamiento.objects.select_related('usuario', 'reto').order_by('-fecha')
-    solo_amigos = request.GET.get('filtro') == 'amigos'
-    usuario_id = request.session.get('usuario_id')
-
-    if solo_amigos and usuario_id:
-        yo = Usuario.objects.filter(pk=usuario_id).first()
-        if yo:
-            ids_circulo = list(yo.amigos.values_list('id', flat=True)) + [yo.id]
-            entrenamientos = entrenamientos.filter(usuario_id__in=ids_circulo)
-
+    entrenamientos = (
+        Entrenamiento.objects.filter(reto__isnull=True)
+        .select_related('usuario')
+        .order_by('-fecha')
+    )
     retos_completados = (
-        Reto.objects.filter(Q(completado_por__isnull=False) | Q(intentos__isnull=False))
+        Reto.objects.filter(completado_por__isnull=False)
         .distinct()
-        .prefetch_related('completado_por', 'intentos__usuario')
+        .prefetch_related('completado_por')
     )
     return render(request, 'entrenamientos/lista.html', {
         'entrenamientos': entrenamientos,
         'retos_completados': retos_completados,
-        'solo_amigos': solo_amigos,
     })
 
 
@@ -271,56 +264,34 @@ def _rechazar(request, reto, mensaje, status=400):
     return redirect('detalle_reto', pk=reto.pk)
 
 
+# FLUJO 2: Completar un reto (NO crea entrenamiento, solo marca el reto y suma puntos)
 def completar_reto(request, pk):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
-        if _es_ajax(request):
-            return JsonResponse({'ok': False, 'mensaje': 'Inicia sesión para completar retos.'}, status=401)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'mensaje': 'Inicia sesión para completar retos.'})
         return redirect('login_usuario')
 
     usuario = get_object_or_404(Usuario, id=usuario_id)
     reto = get_object_or_404(Reto, pk=pk)
 
-    if reto.estado_semana != 'ACTIVO':
-        return _rechazar(request, reto, 'Este reto no está activo esta semana.')
-    if Entrenamiento.objects.filter(usuario=usuario, reto=reto).exists() \
-            or reto.completado_por.filter(pk=usuario.pk).exists():
-        return _rechazar(request, reto, 'Ya has completado este reto.')
-
     if request.method == 'POST':
-        duracion = _entero(request.POST.get('duracion_minutos'), 30)
-        notas = request.POST.get('notas', '')[:2000]
+        if reto.completado_por.filter(id=usuario.id).exists():
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'ok': False, 'mensaje': 'Ya habías completado este reto.'})
+            return redirect('detalle_reto', pk=reto.pk)
 
-        with transaction.atomic():
-            entrenamiento = Entrenamiento.objects.create(
-                usuario=usuario,
-                reto=reto,
-                fecha=timezone.localdate(),
-                duracion_minutos=duracion,
-                notas=notas or f"Reto superado: {reto.nombre}",
-            )
+        reto.completado_por.add(usuario)
+        usuario.puntos += reto.puntos_recompensa
+        usuario.save()
 
-            for ejercicio in reto.ejercicios.all():
-                EntrenamientoEjercicio.objects.create(
-                    entrenamiento=entrenamiento,
-                    ejercicio=ejercicio,
-                    series=_entero(request.POST.get(f'series_{ejercicio.id}'), 3),
-                    repeticiones=_entero(request.POST.get(f'reps_{ejercicio.id}'), 10),
-                    peso_kg=_decimal(request.POST.get(f'peso_{ejercicio.id}')),
-                )
-
-            reto.completado_por.add(usuario)
-            Usuario.objects.filter(pk=usuario.pk).update(puntos=F('puntos') + reto.puntos_recompensa)
-
-        usuario.refresh_from_db()
-        if _es_ajax(request):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({
                 'ok': True,
-                'mensaje': f'¡Reto registrado! Has ganado +{reto.puntos_recompensa} puntos (Total: {usuario.puntos} pts).',
-                'redirect_url': redirect('detalle_entrenamiento', pk=entrenamiento.pk).url,
+                'mensaje': f'¡Reto completado! Has ganado +{reto.puntos_recompensa} puntos (Total: {usuario.puntos} pts).',
+                'redirect_url': f'/retos/{reto.pk}/'
             })
 
-        messages.success(request, f'¡Reto registrado! +{reto.puntos_recompensa} puntos.')
-        return redirect('detalle_entrenamiento', pk=entrenamiento.pk)
+        return redirect('detalle_reto', pk=reto.pk)
 
     return render(request, 'retos/completar.html', {'reto': reto})
