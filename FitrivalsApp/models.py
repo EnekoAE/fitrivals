@@ -17,6 +17,7 @@ class Usuario(models.Model):
     password = models.CharField(max_length=128)
     fecha_alta = models.DateField(auto_now_add=True)
     puntos = models.IntegerField(default=0)
+    amigos = models.ManyToManyField('self', symmetrical=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.puntos} pts)"

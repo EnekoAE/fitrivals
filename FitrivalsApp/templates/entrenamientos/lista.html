@@ -13,6 +13,19 @@
         </div>
     </div>
 
+    {% if request.session.usuario_id %}
+        <div class="hero-actions" style="margin-bottom: 1.5rem;">
+            <a href="{% url 'lista_entrenamientos' %}"
+               class="{% if not solo_amigos %}btn-primary-strava{% else %}btn-secondary-strava{% endif %}">
+                Todos los atletas
+            </a>
+            <a href="{% url 'lista_entrenamientos' %}?filtro=amigos"
+               class="{% if solo_amigos %}btn-primary-strava{% else %}btn-secondary-strava{% endif %}">
+                Solo mi círculo
+            </a>
+        </div>
+    {% endif %}
+
     <div class="dashboard-grid">
         {% for entrenamiento in entrenamientos %}
             <div class="info-card">
@@ -35,7 +48,11 @@
             </div>
         {% empty %}
             <div class="info-card">
-                <p>No hay entrenamientos registrados.</p>
+                {% if solo_amigos %}
+                    <p>No hay entrenamientos registrados en tu círculo todavía.</p>
+                {% else %}
+                    <p>No hay entrenamientos registrados.</p>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

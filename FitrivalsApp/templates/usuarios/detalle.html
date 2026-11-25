@@ -4,14 +4,30 @@
 
 {% block content %}
     <div class="hero-card">
-        <span class="badge-orange">Perfil de atleta</span>
-        <h1>{{ usuario.nombre }}</h1>
-        <div class="meta-datos">
-            {% if request.session.usuario_id == usuario.id %}
-                <span><strong>Email:</strong> {{ usuario.email }}</span>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+            <div>
+                <span class="badge-orange">Perfil de atleta</span>
+                <h1>{{ usuario.nombre }}</h1>
+                <div class="meta-datos">
+                    {% if request.session.usuario_id == usuario.id %}
+                        <span><strong>Email:</strong> {{ usuario.email }}</span>
+                    {% endif %}
+                    <span><strong>Miembro desde:</strong> {{ usuario.fecha_alta }}</span>
+                    <span><strong>Puntos:</strong> {{ usuario.puntos }} pts</span>
+                    <span><strong>Círculo:</strong> {{ usuario.amigos.count }} amigo{{ usuario.amigos.count|pluralize }}</span>
+                </div>
+            </div>
+
+            {% if request.session.usuario_id and request.session.usuario_id != usuario.id %}
+                <form method="post" action="{% url 'toggle_amigo' usuario.pk %}">
+                    {% csrf_token %}
+                    {% if es_amigo %}
+                        <button type="submit" class="btn-secondary-strava">✓ En tu círculo (Quitar)</button>
+                    {% else %}
+                        <button type="submit" class="btn-primary-strava">+ Añadir a mi círculo</button>
+                    {% endif %}
+                </form>
             {% endif %}
-            <span><strong>Miembro desde:</strong> {{ usuario.fecha_alta }}</span>
-            <span><strong>Puntos:</strong> {{ usuario.puntos }} pts</span>
         </div>
     </div>
 

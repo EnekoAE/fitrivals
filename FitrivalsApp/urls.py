@@ -12,6 +12,7 @@ urlpatterns = [
     # Usuarios
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/<int:pk>/', views.detalle_usuario, name='detalle_usuario'),
+    path('usuarios/<int:pk>/amigo/', views.toggle_amigo, name='toggle_amigo'),
 
     # Ejercicios
     path('ejercicios/', views.lista_ejercicios, name='lista_ejercicios'),

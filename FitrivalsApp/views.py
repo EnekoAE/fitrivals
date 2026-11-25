@@ -37,11 +37,39 @@ def _es_ajax(request):
 def index(request):
     retos = Reto.objects.all()
     usuarios = Usuario.objects.order_by('-puntos')
+    usuarios_amigos = None
+
+    usuario_id = request.session.get('usuario_id')
+    if usuario_id:
+        yo = Usuario.objects.filter(pk=usuario_id).first()
+        if yo:
+            ids_circulo = list(yo.amigos.values_list('id', flat=True)) + [yo.id]
+            usuarios_amigos = Usuario.objects.filter(id__in=ids_circulo).order_by('-puntos')
+
     return render(request, 'index.html', {
         'retos': retos,
         'usuarios': usuarios,
+        'usuarios_amigos': usuarios_amigos,
     })
 
+@require_POST
+def toggle_amigo(request, pk):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_usuario')
+
+    yo = get_object_or_404(Usuario, pk=usuario_id)
+    otro = get_object_or_404(Usuario, pk=pk)
+
+    if yo.pk != otro.pk:
+        if yo.amigos.filter(pk=otro.pk).exists():
+            yo.amigos.remove(otro)
+            messages.info(request, f'Has eliminado a {otro.nombre} de tu círculo.')
+        else:
+            yo.amigos.add(otro)
+            messages.success(request, f'¡{otro.nombre} añadido a tu círculo de amigos!')
+
+    return redirect('detalle_usuario', pk=otro.pk)
 
 # Portal de Usuarios: Registro, Login y Logout
 def registro_usuario(request):
@@ -92,9 +120,18 @@ def lista_usuarios(request):
 def detalle_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
     entrenamientos = usuario.entrenamientos.select_related('reto').order_by('-fecha')
+    es_amigo = False
+
+    usuario_id = request.session.get('usuario_id')
+    if usuario_id and usuario_id != usuario.pk:
+        yo = Usuario.objects.filter(pk=usuario_id).first()
+        if yo:
+            es_amigo = yo.amigos.filter(pk=usuario.pk).exists()
+
     return render(request, 'usuarios/detalle.html', {
         'usuario': usuario,
         'entrenamientos': entrenamientos,
+        'es_amigo': es_amigo,
     })
 
 
@@ -111,7 +148,16 @@ def detalle_ejercicio(request, pk):
 
 # Vistas de Entrenamientos + Historial de Retos
 def lista_entrenamientos(request):
-    entrenamientos = Entrenamiento.objects.select_related('usuario').order_by('-fecha')
+    entrenamientos = Entrenamiento.objects.select_related('usuario', 'reto').order_by('-fecha')
+    solo_amigos = request.GET.get('filtro') == 'amigos'
+    usuario_id = request.session.get('usuario_id')
+
+    if solo_amigos and usuario_id:
+        yo = Usuario.objects.filter(pk=usuario_id).first()
+        if yo:
+            ids_circulo = list(yo.amigos.values_list('id', flat=True)) + [yo.id]
+            entrenamientos = entrenamientos.filter(usuario_id__in=ids_circulo)
+
     retos_completados = (
         Reto.objects.filter(Q(completado_por__isnull=False) | Q(intentos__isnull=False))
         .distinct()
@@ -120,6 +166,7 @@ def lista_entrenamientos(request):
     return render(request, 'entrenamientos/lista.html', {
         'entrenamientos': entrenamientos,
         'retos_completados': retos_completados,
+        'solo_amigos': solo_amigos,
     })
 
 
