@@ -378,8 +378,37 @@ def lista_ejercicios(request):
 
 
 def detalle_ejercicio(request, pk):
+    import unicodedata
+
     ejercicio = get_object_or_404(Ejercicio, pk=pk)
-    return render(request, 'ejercicios/detalle.html', {'ejercicio': ejercicio})
+
+    nombre_limpio = ''.join(
+        c for c in unicodedata.normalize('NFKD', ejercicio.nombre.lower())
+        if not unicodedata.combining(c)
+    )
+
+    mapa_imagenes = [
+        ('sentadilla', 'img/ejercicios/Sentadilla.jpg'),
+        ('plancha', 'img/ejercicios/PlanchaPlana.jpg'),
+        ('dominada', 'img/ejercicios/Dominada.jpg'),
+        ('curl', 'img/ejercicios/CurlBiceps.jpg'),
+        ('bicep', 'img/ejercicios/CurlBiceps.jpg'),
+        ('banca', 'img/ejercicios/PressBanca.jpg'),
+        ('frances', 'img/ejercicios/PressFrances.jpg'),
+        ('militar', 'img/ejercicios/PressMilitar.jpg'),
+        ('jalon', 'img/ejercicios/JalonPecho.jpg'),
+    ]
+
+    imagen_ejercicio = None
+    for clave, ruta in mapa_imagenes:
+        if clave in nombre_limpio:
+            imagen_ejercicio = ruta
+            break
+
+    return render(request, 'ejercicios/detalle.html', {
+        'ejercicio': ejercicio,
+        'imagen_ejercicio': imagen_ejercicio,
+    })
 
 
 # Redirige cualquier acceso antiguo de entrenamientos a la pestaña de Círculos
