@@ -9,46 +9,111 @@
                 <span class="badge-orange">Perfil de atleta</span>
                 <h1>{{ usuario.nombre }}</h1>
                 <div class="meta-datos">
-                    {% if request.session.usuario_id == usuario.id %}
+                    {% if es_mi_perfil %}
                         <span><strong>Email:</strong> {{ usuario.email }}</span>
                     {% endif %}
                     <span><strong>Miembro desde:</strong> {{ usuario.fecha_alta }}</span>
-                    <span><strong>Puntos:</strong> {{ usuario.puntos }} pts</span>
-                    <span><strong>Círculo:</strong> {{ usuario.amigos.count }} amigo{{ usuario.amigos.count|pluralize }}</span>
+                    {% if es_mi_perfil or comparten_circulo %}
+                        <span><strong>Puntos:</strong> {{ usuario.puntos }} pts</span>
+                    {% endif %}
+                    <span><strong>Círculos:</strong> {{ mis_circulos_usuario|length }}</span>
                 </div>
             </div>
 
-            {% if request.session.usuario_id and request.session.usuario_id != usuario.id %}
-                <form method="post" action="{% url 'toggle_amigo' usuario.pk %}">
+            {% if not es_mi_perfil and circulos_para_invitar %}
+                <form method="post" action="{% url 'invitar_circulo' %}" style="display: flex; gap: 0.5rem; align-items: center;">
                     {% csrf_token %}
-                    {% if es_amigo %}
-                        <button type="submit" class="btn-secondary-strava">✓ En tu círculo (Quitar)</button>
-                    {% else %}
-                        <button type="submit" class="btn-primary-strava">+ Añadir a mi círculo</button>
-                    {% endif %}
+                    <input type="hidden" name="invitado_id" value="{{ usuario.pk }}">
+                    <input type="hidden" name="next" value="{% url 'detalle_usuario' usuario.pk %}">
+                    <select name="circulo_id" style="padding: 0.55rem; border-radius: 6px; border: 1px solid #ccc;">
+                        {% for c in circulos_para_invitar %}
+                            <option value="{{ c.pk }}">{{ c.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-primary-strava">Invitar a círculo</button>
                 </form>
             {% endif %}
         </div>
     </div>
 
-    <h2>Historial de entrenamientos</h2>
-    <div class="dashboard-grid">
-        {% for entrenamiento in entrenamientos %}
-            <div class="info-card">
-                <div>
-                    {% if entrenamiento.reto %}
-                        <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }}</span>
-                    {% else %}
-                        <span class="points-badge">Entrenamiento libre</span>
-                    {% endif %}
-                    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
+    {% if es_mi_perfil and invitaciones_pendientes %}
+        <h2>Invitaciones pendientes</h2>
+        <div class="dashboard-grid" style="margin-bottom: 2rem;">
+            {% for inv in invitaciones_pendientes %}
+                <div class="info-card">
+                    <div>
+                        <span class="badge-orange">Solicitud recibida</span>
+                        <h3>{{ inv.circulo.nombre }}</h3>
+                        <p><strong>Anfitrión:</strong> {{ inv.circulo.anfitrion.nombre }}</p>
+                    </div>
+                    <div class="hero-actions" style="margin-top: 0.75rem;">
+                        <form method="post" action="{% url 'responder_invitacion' inv.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="aceptar">
+                            <button type="submit" class="btn-primary-strava">Aceptar</button>
+                        </form>
+                        <form method="post" action="{% url 'responder_invitacion' inv.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="rechazar">
+                            <button type="submit" class="btn-secondary-strava">Rechazar</button>
+                        </form>
+                    </div>
                 </div>
-                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">Ver detalle →</a>
-            </div>
-        {% empty %}
-            <div class="info-card"><p>Este atleta aún no tiene entrenamientos registrados.</p></div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if es_mi_perfil %}
+        <div class="section-header">
+            <h2>Mis Círculos</h2>
+            <a href="{% url 'crear_circulo' %}" class="btn-primary-strava">+ Crear círculo</a>
+        </div>
+        <div class="dashboard-grid" style="margin-bottom: 2rem;">
+            {% for c in mis_circulos_usuario %}
+                <div class="info-card">
+                    <div>
+                        {% if c.anfitrion_id == usuario.id %}
+                            <span class="badge-orange">Anfitrión</span>
+                        {% else %}
+                            <span class="points-badge">Miembro</span>
+                        {% endif %}
+                        <h3>{{ c.nombre }}</h3>
+                        <p>{{ c.miembros.count }} atleta{{ c.miembros.count|pluralize }}</p>
+                    </div>
+                    <a href="{% url 'detalle_circulo' c.pk %}" class="card-link">Entrar al círculo →</a>
+                </div>
+            {% empty %}
+                <div class="info-card">
+                    <p>Aún no estás en ningún círculo.</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <h2>Historial de entrenamientos</h2>
+    {% if es_mi_perfil or comparten_circulo %}
+        <div class="dashboard-grid">
+            {% for entrenamiento in entrenamientos %}
+                <div class="info-card">
+                    <div>
+                        {% if entrenamiento.reto %}
+                            <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }}</span>
+                        {% else %}
+                            <span class="points-badge">Entrenamiento libre</span>
+                        {% endif %}
+                        <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
+                    </div>
+                    <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">Ver detalle →</a>
+                </div>
+            {% empty %}
+                <div class="info-card"><p>Este atleta aún no tiene entrenamientos registrados.</p></div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="info-card">
+            <p>Los entrenamientos de {{ usuario.nombre }} son privados. Debéis compartir un círculo para ver su actividad.</p>
+        </div>
+    {% endif %}
 
     <div class="detalle-acciones">
         <a href="{% url 'lista_usuarios' %}" class="btn-secondary-strava">← Volver a atletas</a>

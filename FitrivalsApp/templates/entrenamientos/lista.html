@@ -4,85 +4,86 @@
 
 {% block content %}
     <div class="section-header">
-        <h1>Historial de Entrenamientos</h1>
+        <h1>Entrenamientos por Círculo</h1>
         <div class="hero-actions">
-            {% if request.session.usuario_id %}
-                <a href="{% url 'crear_entrenamiento' %}" class="btn-primary-strava">+ Registrar Entrenamiento</a>
-            {% endif %}
+            <a href="{% url 'crear_entrenamiento' %}" class="btn-primary-strava">+ Registrar Entrenamiento</a>
             <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
         </div>
     </div>
 
-    {% if request.session.usuario_id %}
-        <div class="hero-actions" style="margin-bottom: 1.5rem;">
-            <a href="{% url 'lista_entrenamientos' %}"
-               class="{% if not solo_amigos %}btn-primary-strava{% else %}btn-secondary-strava{% endif %}">
-                Todos los atletas
-            </a>
-            <a href="{% url 'lista_entrenamientos' %}?filtro=amigos"
-               class="{% if solo_amigos %}btn-primary-strava{% else %}btn-secondary-strava{% endif %}">
-                Solo mi círculo
-            </a>
+    {% if mis_circulos %}
+        <div class="hero-actions" style="margin-bottom: 1.5rem; flex-wrap: wrap;">
+            {% for c in mis_circulos %}
+                <a href="?circulo={{ c.pk }}"
+                   class="{% if circulo_activo.pk == c.pk %}btn-primary-strava{% else %}btn-secondary-strava{% endif %}">
+                    {{ c.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="dashboard-grid">
+            {% for entrenamiento in entrenamientos %}
+                <div class="info-card">
+                    <div>
+                        {% if entrenamiento.reto %}
+                            <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }} (+{{ entrenamiento.reto.puntos_recompensa }} pts)</span>
+                        {% else %}
+                            <span class="points-badge">Entrenamiento libre · {{ entrenamiento.duracion_minutos }} min</span>
+                        {% endif %}
+
+                        <h3>{{ entrenamiento.usuario.nombre }}</h3>
+                        <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
+
+                        <ul>
+                            {% for item in entrenamiento.entrenamientoejercicio_set.all %}
+                                <li>{{ item.ejercicio.nombre }}: {{ item.series }}x{{ item.repeticiones }} ({{ item.peso_kg }} kg)</li>
+                            {% empty %}
+                                <li>Sin ejercicios detallados.</li>
+                            {% endfor %}
+                        </ul>
+
+                        {% if entrenamiento.notas %}
+                            <p>{{ entrenamiento.notas }}</p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">
+                        Ver detalle →
+                    </a>
+                </div>
+            {% empty %}
+                <div class="info-card">
+                    <p>No hay entrenamientos registrados en {{ circulo_activo.nombre }} todavía.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Retos completados en {{ circulo_activo.nombre }}</h2>
+        <div class="dashboard-grid">
+            {% for reto in retos_completados %}
+                <div class="info-card">
+                    <div>
+                        <span class="points-badge">+{{ reto.puntos_recompensa }} pts</span>
+                        <h3>{{ reto.nombre }}</h3>
+                        {% if reto.descripcion %}
+                            <p>{{ reto.descripcion }}</p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'detalle_reto' reto.pk %}" class="card-link">
+                        Ver detalle →
+                    </a>
+                </div>
+            {% empty %}
+                <div class="info-card">
+                    <p>Ningún miembro de {{ circulo_activo.nombre }} ha completado retos todavía.</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="info-card">
+            <p>Únete o crea un círculo para ver los entrenamientos de tus compañeros.</p>
+            <div class="hero-actions" style="margin-top: 1rem;">
+                <a href="{% url 'crear_circulo' %}" class="btn-primary-strava">+ Crear un círculo</a>
+            </div>
         </div>
     {% endif %}
-
-    <div class="dashboard-grid">
-        {% for entrenamiento in entrenamientos %}
-            <div class="info-card">
-                <div>
-                    {% if entrenamiento.reto %}
-                        <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }} (+{{ entrenamiento.reto.puntos_recompensa }} pts)</span>
-                    {% else %}
-                        <span class="points-badge">Entrenamiento libre · {{ entrenamiento.duracion_minutos }} min</span>
-                    {% endif %}
-
-                    <h3>{{ entrenamiento.usuario.nombre }}</h3>
-                    <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
-                    {% if entrenamiento.notas %}
-                        <p>{{ entrenamiento.notas }}</p>
-                    {% endif %}
-                </div>
-                <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">
-                    Ver detalle →
-                </a>
-            </div>
-        {% empty %}
-            <div class="info-card">
-                {% if solo_amigos %}
-                    <p>No hay entrenamientos registrados en tu círculo todavía.</p>
-                {% else %}
-                    <p>No hay entrenamientos registrados.</p>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
-
-    <h2>Historial de Retos</h2>
-
-    <div class="dashboard-grid">
-        {% for reto in retos_completados %}
-            <div class="info-card">
-                <div>
-                    <span class="points-badge">+{{ reto.puntos_recompensa }} pts</span>
-                    <h3>{{ reto.nombre }}</h3>
-                    {% if reto.descripcion %}
-                        <p>{{ reto.descripcion }}</p>
-                    {% endif %}
-                    <p>
-                        <strong>Completado por:</strong>
-                        {% for atleta in reto.completado_por.all %}
-                            <a href="{% url 'detalle_usuario' atleta.pk %}">{{ atleta.nombre }}</a>{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    </p>
-                </div>
-                <a href="{% url 'detalle_reto' reto.pk %}" class="card-link">
-                    Ver detalle →
-                </a>
-            </div>
-        {% empty %}
-            <div class="info-card">
-                <p>Todavía no se ha completado ningún reto.</p>
-            </div>
-        {% endfor %}
-    </div>
 {% endblock %}

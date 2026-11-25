@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Círculo | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Crear nuevo Círculo</h1>
+        <a href="{% url 'lista_circulos' %}" class="btn-secondary-strava">← Volver a mis círculos</a>
+    </div>
+
+    <div class="hero-card">
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                <label for="{{ form.nombre.id_for_label }}"><strong>{{ form.nombre.label }}</strong></label><br>
+                {{ form.nombre }}
+                {{ form.nombre.errors }}
+            </p>
+            <p>
+                <label for="{{ form.descripcion.id_for_label }}"><strong>{{ form.descripcion.label }}</strong></label><br>
+                {{ form.descripcion }}
+                {{ form.descripcion.errors }}
+            </p>
+
+            {% if form.invitados.field.queryset %}
+                <div style="margin: 1rem 0;">
+                    <p><strong>{{ form.invitados.label }}</strong></p>
+                    {{ form.invitados }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn-primary-strava">Crear círculo y enviar solicitudes</button>
+        </form>
+    </div>
+{% endblock %}

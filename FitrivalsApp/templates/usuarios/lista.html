@@ -4,26 +4,59 @@
 
 {% block content %}
     <div class="section-header">
-        <h1>Atletas registrados</h1>
-        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+        <h1>Buscar Atletas</h1>
+        <div class="hero-actions">
+            <a href="{% url 'crear_circulo' %}" class="btn-primary-strava">+ Crear nuevo círculo</a>
+            <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+        </div>
     </div>
 
-    <div class="strava-table-wrapper">
-        <table class="strava-table">
-            <thead>
-                <tr><th>Posición</th><th>Atleta</th><th>Puntos</th></tr>
-            </thead>
-            <tbody>
-                {% for usuario in usuarios %}
-                <tr>
-                    <td><strong>#{{ forloop.counter }}</strong></td>
-                    <td><a href="{% url 'detalle_usuario' usuario.pk %}">{{ usuario.nombre }}</a></td>
-                    <td><span class="points-badge">{{ usuario.puntos }} pts</span></td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="3">No hay usuarios registrados.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="hero-card" style="margin-bottom: 1.5rem;">
+        <form method="get" action="{% url 'lista_usuarios' %}" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+            <input type="text"
+                   name="q"
+                   value="{{ query }}"
+                   placeholder="Buscar atleta por nombre..."
+                   style="flex: 1; min-width: 220px; padding: 0.65rem 0.9rem; border-radius: 6px; border: 1px solid #ccc;">
+            <button type="submit" class="btn-primary-strava">Buscar</button>
+            {% if query %}
+                <a href="{% url 'lista_usuarios' %}" class="btn-secondary-strava">Limpiar</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if not mis_circulos_anfitrion %}
+        <div class="info-card" style="margin-bottom: 1.5rem;">
+            <p>Aún no eres anfitrión de ningún círculo. <a href="{% url 'crear_circulo' %}" class="card-link">Crea tu primer círculo</a> para poder enviar solicitudes a otros atletas.</p>
+        </div>
+    {% endif %}
+
+    <div class="dashboard-grid">
+        {% for atleta in atletas %}
+            <div class="info-card">
+                <div>
+                    <h3><a href="{% url 'detalle_usuario' atleta.pk %}">{{ atleta.nombre }}</a></h3>
+                    <p>Miembro desde {{ atleta.fecha_alta }}</p>
+                </div>
+
+                {% if mis_circulos_anfitrion %}
+                    <form method="post" action="{% url 'invitar_circulo' %}" style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.75rem;">
+                        {% csrf_token %}
+                        <input type="hidden" name="invitado_id" value="{{ atleta.pk }}">
+                        <input type="hidden" name="next" value="{% url 'lista_usuarios' %}">
+                        <select name="circulo_id" style="flex: 1; min-width: 140px; padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+                            {% for c in mis_circulos_anfitrion %}
+                                <option value="{{ c.pk }}">{{ c.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn-primary-strava">Invitar</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="info-card">
+                <p>No se han encontrado atletas con ese nombre.</p>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

@@ -11,16 +11,46 @@ def inicio_semana():
 def fin_semana():
     return inicio_semana() + datetime.timedelta(days=6)
 
+
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     fecha_alta = models.DateField(auto_now_add=True)
     puntos = models.IntegerField(default=0)
-    amigos = models.ManyToManyField('self', symmetrical=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.puntos} pts)"
+
+
+class Circulo(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, default='')
+    anfitrion = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='circulos_creados')
+    miembros = models.ManyToManyField(Usuario, related_name='circulos', blank=True)
+    fecha_creacion = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nombre} (Anfitrión: {self.anfitrion.nombre})"
+
+
+class InvitacionCirculo(models.Model):
+    ESTADOS = [
+        ('PENDIENTE', 'Pendiente'),
+        ('ACEPTADA', 'Aceptada'),
+        ('RECHAZADA', 'Rechazada'),
+    ]
+
+    circulo = models.ForeignKey(Circulo, on_delete=models.CASCADE, related_name='invitaciones')
+    invitado = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='invitaciones_recibidas')
+    estado = models.CharField(max_length=15, choices=ESTADOS, default='PENDIENTE')
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('circulo', 'invitado')
+
+    def __str__(self):
+        return f"{self.invitado.nombre} → {self.circulo.nombre} ({self.get_estado_display()})"
 
 
 class Ejercicio(models.Model):
@@ -54,7 +84,7 @@ class Entrenamiento(models.Model):
     reto = models.ForeignKey("Reto", on_delete=models.SET_NULL, null=True, blank=True, related_name="intentos")
     duracion_minutos = models.PositiveIntegerField(help_text="Duración en minutos")
     notas = models.TextField(blank=True, null=True)
-    ejercicios = models.ManyToManyField(Ejercicio, through='EntrenamientoEjercicio')  
+    ejercicios = models.ManyToManyField(Ejercicio, through='EntrenamientoEjercicio')
 
     def __str__(self):
         return f"Entrenamiento de {self.usuario.nombre} - {self.fecha}"

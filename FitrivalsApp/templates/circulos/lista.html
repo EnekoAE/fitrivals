@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Círculos | Fit Rivals{% endblock %}
+
+{% block content %}
+    <div class="section-header">
+        <h1>Mis Círculos</h1>
+        <a href="{% url 'crear_circulo' %}" class="btn-primary-strava">+ Crear nuevo círculo</a>
+    </div>
+
+    {% if invitaciones_pendientes %}
+        <h2>Solicitudes pendientes</h2>
+        <div class="dashboard-grid" style="margin-bottom: 2rem;">
+            {% for inv in invitaciones_pendientes %}
+                <div class="info-card">
+                    <div>
+                        <span class="badge-orange">Invitación</span>
+                        <h3>{{ inv.circulo.nombre }}</h3>
+                        <p><strong>Anfitrión:</strong> {{ inv.circulo.anfitrion.nombre }}</p>
+                        {% if inv.circulo.descripcion %}
+                            <p>{{ inv.circulo.descripcion }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="hero-actions" style="margin-top: 0.75rem;">
+                        <form method="post" action="{% url 'responder_invitacion' inv.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="aceptar">
+                            <button type="submit" class="btn-primary-strava">Aceptar y unirme</button>
+                        </form>
+                        <form method="post" action="{% url 'responder_invitacion' inv.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="rechazar">
+                            <button type="submit" class="btn-secondary-strava">Rechazar</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <h2>Círculos activos</h2>
+    <div class="dashboard-grid">
+        {% for c in mis_circulos %}
+            <div class="info-card">
+                <div>
+                    {% if c.anfitrion_id == request.session.usuario_id %}
+                        <span class="badge-orange">Anfitrión</span>
+                    {% else %}
+                        <span class="points-badge">Miembro</span>
+                    {% endif %}
+                    <h3>{{ c.nombre }}</h3>
+                    {% if c.descripcion %}
+                        <p>{{ c.descripcion }}</p>
+                    {% endif %}
+                    <p><strong>Miembros:</strong> {{ c.miembros.count }}</p>
+                </div>
+                <a href="{% url 'detalle_circulo' c.pk %}" class="card-link">Ver clasificación y detalles →</a>
+            </div>
+        {% empty %}
+            <div class="info-card">
+                <p>No formas parte de ningún círculo todavía.</p>
+                <a href="{% url 'crear_circulo' %}" class="card-link">Crear mi primer círculo →</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

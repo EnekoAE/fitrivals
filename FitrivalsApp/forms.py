@@ -1,6 +1,5 @@
 from django import forms
-from .models import Usuario
-from .models import Entrenamiento
+from .models import Usuario, Entrenamiento, Circulo
 
 
 class RegistroUsuarioForm(forms.ModelForm):
@@ -46,6 +45,8 @@ class LoginUsuarioForm(forms.Form):
             'required': True,
         })
     )
+
+
 class EntrenamientoForm(forms.ModelForm):
     class Meta:
         model = Entrenamiento
@@ -58,3 +59,29 @@ class EntrenamientoForm(forms.ModelForm):
             'duracion_minutos': forms.NumberInput(attrs={'min': 1, 'placeholder': 'Ej: 45'}),
             'notas': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Sensaciones, rutina del día...'}),
         }
+
+
+class CirculoForm(forms.ModelForm):
+    invitados = forms.ModelMultipleChoiceField(
+        queryset=Usuario.objects.none(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label='Invitar atletas al crear (opcional)'
+    )
+
+    class Meta:
+        model = Circulo
+        fields = ['nombre', 'descripcion']
+        labels = {
+            'nombre': 'Nombre del círculo',
+            'descripcion': 'Descripción',
+        }
+        widgets = {
+            'nombre': forms.TextInput(attrs={'placeholder': 'Ej: Gimnasio Deusto, Liga Mañanas...'}),
+            'descripcion': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Describe brevemente este círculo...'}),
+        }
+
+    def __init__(self, *args, usuario_actual=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if usuario_actual:
+            self.fields['invitados'].queryset = Usuario.objects.exclude(pk=usuario_actual.pk).order_by('nombre')

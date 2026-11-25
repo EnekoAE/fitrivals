@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.hashers import make_password, identify_hasher
-from .models import Usuario, Ejercicio, Entrenamiento, EntrenamientoEjercicio, Reto
+from .models import Usuario, Circulo, InvitacionCirculo, Ejercicio, Entrenamiento, EntrenamientoEjercicio, Reto
 
 
 class EntrenamientoEjercicioInline(admin.TabularInline):
@@ -12,19 +12,31 @@ class EntrenamientoEjercicioInline(admin.TabularInline):
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'email', 'puntos', 'fecha_alta')
     search_fields = ('nombre', 'email')
+
     def get_readonly_fields(self, request, obj=None):
-        # Si el usuario ya existe (obj != None), bloqueamos la contraseña como solo lectura
         if obj:
             return ('password',)
         return ()
 
     def save_model(self, request, obj, form, change):
-        # Si la contraseña no tiene formato cifrado de Django, la encriptamos antes de guardar
         try:
             identify_hasher(obj.password)
         except ValueError:
             obj.password = make_password(obj.password)
         super().save_model(request, obj, form, change)
+
+
+@admin.register(Circulo)
+class CirculoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'anfitrion', 'fecha_creacion')
+    search_fields = ('nombre', 'anfitrion__nombre')
+    filter_horizontal = ('miembros',)
+
+
+@admin.register(InvitacionCirculo)
+class InvitacionCirculoAdmin(admin.ModelAdmin):
+    list_display = ('circulo', 'invitado', 'estado', 'fecha_envio')
+    list_filter = ('estado', 'circulo')
 
 
 @admin.register(Ejercicio)
