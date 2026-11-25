@@ -177,7 +177,6 @@ def detalle_entrenamiento(request, pk):
     return render(request, 'entrenamientos/detalle.html', {'entrenamiento': entrenamiento})
 
 
-# Vistas Basadas en Clases para Retos Semanales (Opción 2 E4a)
 class RetoListView(ListView):
     model = Reto
     template_name = 'retos/lista.html'
@@ -187,10 +186,10 @@ class RetoListView(ListView):
         context = super().get_context_data(**kwargs)
         hoy = timezone.localdate()
 
-        context['retos_activos'] = Reto.objects.filter(
+        context['reto_activo'] = Reto.objects.filter(
             fecha_inicio__lte=hoy,
             fecha_fin__gte=hoy
-        ).prefetch_related('ejercicios').order_by('fecha_fin')
+        ).order_by('fecha_inicio').first()
 
         context['retos_proximos'] = Reto.objects.filter(
             fecha_inicio__gt=hoy

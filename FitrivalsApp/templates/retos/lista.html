@@ -1,76 +1,91 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Retos Semanales - Fit Rivals{% endblock %}
 
 {% block content %}
-<span class="badge-orange">DESAFÍOS DE LA SEMANA</span>
+<span class="badge-orange">DESAFÍO SEMANAL</span>
 <h1>Retos Semanales</h1>
 <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
-    Cada semana se activan nuevos desafíos temáticos. Complétalos dentro de sus fechas para registrar tu entrenamiento y sumar puntos.
+    Cada semana activamos un único reto temático. Complétalo dentro de sus fechas para registrar tu entrenamiento y sumar puntos.
 </p>
 
 <div class="form-group" style="max-width: 400px; margin-bottom: 1.5rem;">
     <input type="text" id="buscador-retos" placeholder="Filtrar retos por nombre o ejercicio...">
 </div>
 
-<h2>Retos de esta semana</h2>
-<div class="dashboard-grid">
-    {% for reto in retos_activos %}
-    <article class="info-card tarjeta-reto">
-        <div>
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
-                <span class="badge-orange" style="margin-bottom: 0;">
-                    Semana del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
-                </span>
-                <span class="points-badge" style="margin-bottom: 0;">+{{ reto.puntos_recompensa }} pts</span>
-            </div>
-
-            <h3><a href="{% url 'detalle_reto' reto.pk %}" style="color: var(--text-dark);">{{ reto.nombre }}</a></h3>
-            <p>{{ reto.descripcion }}</p>
-
-            <p style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 0.5rem;">
-                <strong>Ejercicios del reto:</strong>
-            </p>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem;">
-                {% for ej in reto.ejercicios.all %}
-                    <span style="padding: 0.25rem 0.6rem; background: var(--bg-page); border: 1px solid var(--border-light); border-radius: 999px; font-size: 0.82rem;">
-                        {{ ej.nombre }} ({{ ej.get_grupo_muscular_display }})
-                    </span>
-                {% empty %}
-                    <small style="color: var(--text-muted);">Sin ejercicios asignados.</small>
-                {% endfor %}
-            </div>
+<h2>Reto de esta semana</h2>
+{% if reto_activo %}
+<article class="hero-card tarjeta-reto" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
+    <div style="flex: 1; min-width: 280px;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <span class="badge-orange" style="margin-bottom: 0;">
+                Semana del {{ reto_activo.fecha_inicio|date:"j" }} al {{ reto_activo.fecha_fin|date:"j \d\e F" }}
+            </span>
+            <span class="points-badge" style="margin-bottom: 0;">+{{ reto_activo.puntos_recompensa }} pts</span>
         </div>
 
-        <div style="display: flex; gap: 0.5rem;">
-            {% if reto.id in retos_completados_ids %}
-                <span class="btn-primary-strava" style="flex: 1; background-color: #16a34a; cursor: default;">
-                    ✔ Completado (+{{ reto.puntos_recompensa }} pts)
+        <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">
+            <a href="{% url 'detalle_reto' reto_activo.pk %}" style="color: var(--text-dark);">{{ reto_activo.nombre }}</a>
+        </h3>
+        <p>{{ reto_activo.descripcion }}</p>
+
+        <p style="font-size: 0.88rem; color: var(--text-dark); margin-bottom: 0.5rem;">
+            <strong>Ejercicios incluidos en el reto:</strong>
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.4rem;">
+            {% for ej in reto_activo.ejercicios.all %}
+                <span style="padding: 0.3rem 0.7rem; background: var(--bg-page); border: 1px solid var(--border-light); border-radius: 999px; font-size: 0.85rem;">
+                    {{ ej.nombre }} ({{ ej.get_grupo_muscular_display }})
                 </span>
+            {% empty %}
+                <small style="color: var(--text-muted);">Sin ejercicios asignados.</small>
+            {% endfor %}
+        </div>
+
+        <div class="hero-actions">
+            {% if reto_activo.id in retos_completados_ids %}
+                <a href="{% url 'completar_reto' reto_activo.pk %}" class="btn-primary-strava" style="background-color: #16a34a;">
+                    Completado (+{{ reto_activo.puntos_recompensa }} pts)
+                </a>
             {% else %}
-                <a href="{% url 'completar_reto' reto.pk %}" class="btn-primary-strava" style="flex: 1;">
-                    Completar reto
+                <a href="{% url 'completar_reto' reto_activo.pk %}" class="btn-primary-strava">
+                    Completar reto de esta semana
                 </a>
             {% endif %}
-            <a href="{% url 'detalle_reto' reto.pk %}" class="btn-secondary-strava">Ver</a>
+            <a href="{% url 'detalle_reto' reto_activo.pk %}" class="btn-secondary-strava">Ver detalles y marcas</a>
         </div>
-    </article>
-    {% empty %}
-    <div class="info-card">
-        <p>No hay retos activos para esta semana.</p>
     </div>
-    {% endfor %}
+
+    <div style="flex: 1; min-width: 260px; max-width: 380px;">
+        <img src="{% static 'img/reto.jpg' %}"
+             alt="{{ reto_activo.nombre }}"
+             style="width: 100%; height: 240px; object-fit: cover; border-radius: 8px; display: block;">
+    </div>
+</article>
+{% else %}
+<div class="hero-card" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
+    <div style="flex: 1; min-width: 260px;">
+        <h3>Próximamente nuevo desafío</h3>
+        <p style="margin: 0;">No hay ningún reto activo para esta semana. Crea uno desde el panel de administración con fechas de esta semana para activarlo.</p>
+    </div>
+    <div style="flex: 1; min-width: 260px; max-width: 380px;">
+        <img src="{% static 'img/reto.jpg' %}"
+             alt="Retos Semanales Fit Rivals"
+             style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; display: block;">
+    </div>
 </div>
+{% endif %}
 
 {% if retos_proximos %}
-<h2>Próximos retos</h2>
+<h2>Próximas semanas</h2>
 <div class="dashboard-grid">
     {% for reto in retos_proximos %}
     <article class="info-card tarjeta-reto">
         <div>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
-                    Del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
+                    Semana del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
                 </span>
                 <span class="points-badge" style="margin-bottom: 0;">+{{ reto.puntos_recompensa }} pts</span>
             </div>
@@ -84,14 +99,14 @@
 {% endif %}
 
 {% if retos_pasados %}
-<h2>Retos de semanas anteriores</h2>
+<h2>Semanas anteriores</h2>
 <div class="dashboard-grid">
     {% for reto in retos_pasados %}
     <article class="info-card tarjeta-reto">
         <div>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
-                    Finalizado · Del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
+                    Semana del {{ reto.fecha_inicio|date:"j" }} al {{ reto.fecha_fin|date:"j \d\e F" }}
                 </span>
                 <span class="points-badge" style="margin-bottom: 0;">+{{ reto.puntos_recompensa }} pts</span>
             </div>
