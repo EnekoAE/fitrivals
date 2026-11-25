@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.hashers import make_password, identify_hasher
 from .models import Usuario, Ejercicio, Entrenamiento, EntrenamientoEjercicio, Reto
 
 
@@ -12,6 +13,14 @@ class UsuarioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'email', 'puntos', 'fecha_alta')
     search_fields = ('nombre', 'email')
 
+    def save_model(self, request, obj, form, change):
+        # Si la contraseña no tiene formato cifrado de Django, la encriptamos antes de guardar
+        try:
+            identify_hasher(obj.password)
+        except ValueError:
+            obj.password = make_password(obj.password)
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(Ejercicio)
 class EjercicioAdmin(admin.ModelAdmin):
@@ -21,7 +30,7 @@ class EjercicioAdmin(admin.ModelAdmin):
 
 @admin.register(Entrenamiento)
 class EntrenamientoAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'fecha', 'duracion_minutos')
+    list_display = ('usuario', 'fecha', 'reto', 'duracion_minutos')
     list_filter = ('fecha', 'usuario')
     inlines = [EntrenamientoEjercicioInline]
 
