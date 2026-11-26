@@ -1,0 +1,61 @@
+/* ===== TEMA OSCURO (carbón + naranja) ===== */
+
+/* Colores*/
+:root {
+  --bg-page: #111315;
+  --bg-white: #1A1D21;
+  --text-dark: #F3F4F6;
+  --text-muted: #9BA3AF;
+  --border-light: #2B3036;
+  --strava-orange-soft: rgba(252, 76, 2, 0.15);
+}
+
+/* Fondo*/
+.fondo-pagina {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 520px;
+  background: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315),
+              url("../img/fondos/inicio.jpg") center / cover;
+}
+.vista-lista_retos .fondo-pagina, .vista-detalle_reto .fondo-pagina, .vista-completar_reto .fondo-pagina { background-image: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315), url("../img/fondos/retos.jpg"); }
+.vista-lista_ejercicios .fondo-pagina, .vista-detalle_ejercicio .fondo-pagina { background-image: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315), url("../img/fondos/ejercicios.jpg"); }
+.vista-lista_circulos .fondo-pagina, .vista-detalle_circulo .fondo-pagina, .vista-crear_circulo .fondo-pagina { background-image: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315), url("../img/fondos/circulos.jpg"); }
+.vista-lista_usuarios .fondo-pagina, .vista-detalle_usuario .fondo-pagina { background-image: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315), url("../img/fondos/atletas.jpg"); }
+.vista-crear_entrenamiento .fondo-pagina, .vista-detalle_entrenamiento .fondo-pagina { background-image: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315), url("../img/fondos/entrenamientos.jpg"); }
+.vista-login_usuario .fondo-pagina, .vista-registro_usuario .fondo-pagina { background-image: linear-gradient(to bottom, rgba(17,19,21,0.3), #111315), url("../img/fondos/acceso.jpg"); }
+
+.main-wrapper { position: relative; }
+
+.site-header {
+  background-color: rgba(17, 19, 21, 0.7);
+  backdrop-filter: blur(10px);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.site-header .brand, .site-nav a:hover { color: #FFFFFF; }
+.site-nav a:hover { background-color: transparent; }
+
+
+h1 { text-transform: uppercase; font-size: clamp(2.2rem, 5vw, 3.4rem); color: #FFFFFF; }
+h2 { text-transform: uppercase; letter-spacing: 0.03em; }
+
+
+.hero-card, .info-card, .form-card, .strava-table-wrapper, body .catalogo-toolbar {
+  background-color: rgba(26, 29, 33, 0.85);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+
+.btn-secondary-strava, .btn-secondary-nav { background-color: transparent; color: #FFFFFF; }
+.strava-table th { background-color: rgba(255, 255, 255, 0.03); }
+.strava-table tr:hover td { background-color: rgba(252, 76, 2, 0.06); }
+body .grupo-cabecera { border-bottom-color: #2B3036; }
+body .dificultad-pill { background-color: rgba(255, 255, 255, 0.08); }
+input, select, textarea, body .catalogo-buscador { background-color: #15181B !important; color: #F3F4F6; border-color: #2B3036 !important; }
+
+
+.fr-footer { background-color: #0C0D0F; border-top-color: #2B3036; }
+.fr-footer-logo { color: #FFFFFF; }
+.fr-footer-pillars { color: #C9CED6; }
+.fr-footer-line, .fr-footer-divider { background-color: #2B3036; }
