@@ -8,91 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
     <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-    <style>
-        .fr-footer {
-            background-color: #ffffff;
-            border-top: 1px solid #e6e8ec;
-            margin-top: 4.5rem;
-            padding: 2.75rem 1.5rem 2.25rem;
-        }
-
-        .fr-footer-inner {
-            max-width: 680px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .fr-footer-brand-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.9rem;
-            width: 100%;
-            margin-bottom: 0.75rem;
-        }
-
-        .fr-footer-line {
-            height: 1px;
-            width: 48px;
-            background-color: #e4e7ec;
-        }
-
-        .fr-footer-logo {
-            font-size: 1.35rem;
-            font-weight: 800;
-            letter-spacing: 0.8px;
-            color: #101828;
-        }
-
-        .fr-footer-logo span {
-            color: #fc4c02;
-        }
-
-        .fr-footer-subtitle {
-            margin: 0 0 1.15rem 0;
-            font-size: 0.92rem;
-            color: #667085;
-            line-height: 1.5;
-        }
-
-        .fr-footer-pillars {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 0.65rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: #475467;
-        }
-
-        .fr-footer-sep {
-            color: #fc4c02;
-            font-weight: 800;
-        }
-
-        .fr-footer-divider {
-            width: 100%;
-            max-width: 360px;
-            height: 1px;
-            background-color: #f2f4f7;
-            margin: 1.4rem 0 1.1rem;
-        }
-
-        .fr-footer-copy {
-            margin: 0;
-            font-size: 0.82rem;
-            color: #98a2b3;
-        }
-    </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="vista-{{ request.resolver_match.url_name }}">
+    <div class="fondo-pagina"></div>
 
     <header class="site-header">
         <div class="header-container">
@@ -153,30 +72,3 @@
         <div class="fr-footer-inner">
             <div class="fr-footer-brand-row">
                 <span class="fr-footer-line"></span>
-                <div class="fr-footer-logo">FIT<span>RIVALS</span></div>
-                <span class="fr-footer-line"></span>
-            </div>
-
-            <p class="fr-footer-subtitle">
-                Competición social en círculos privados, retos semanales y registro de entrenamientos.
-            </p>
-
-            <div class="fr-footer-pillars">
-                <span>Círculos Privados</span>
-                <span class="fr-footer-sep">&bull;</span>
-                <span>Retos Semanales</span>
-                <span class="fr-footer-sep">&bull;</span>
-                <span>Progreso Real</span>
-            </div>
-
-            <div class="fr-footer-divider"></div>
-
-            <p class="fr-footer-copy">
-                &copy; 2026 Fit Rivals &middot; Todos los derechos reservados
-            </p>
-        </div>
-    </footer>
-
-    {% block extra_js %}{% endblock %}
-</body>
-</html>
