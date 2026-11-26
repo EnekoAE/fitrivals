@@ -1,3 +1,4 @@
+import unicodedata
 from decimal import Decimal, InvalidOperation
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -52,6 +53,53 @@ def _clasificar_bloque_muscular(ejercicio):
     if any(p in texto for p in ('core', 'abdomen', 'abdominal', 'lumbar', 'oblicuo')):
         return 'CORE'
     return 'TREN_SUPERIOR'
+
+
+def _obtener_imagen_ejercicio(ejercicio):
+    nombre_limpio = ''.join(
+        c for c in unicodedata.normalize('NFKD', ejercicio.nombre.lower())
+        if not unicodedata.combining(c)
+    )
+
+    mapa_imagenes = [
+        ('bulgara', 'img/ejercicios/SentadillaBulgara.jpg'),
+        ('sentadilla', 'img/ejercicios/Sentadilla.jpg'),
+        ('plancha', 'img/ejercicios/PlanchaPlana.jpg'),
+        ('dominada', 'img/ejercicios/Dominada.jpg'),
+        ('jalon', 'img/ejercicios/JalonPecho.jpg'),
+        ('peck', 'img/ejercicios/AperturaPeckDeck.jpg'),
+        ('pec deck', 'img/ejercicios/AperturaPeckDeck.jpg'),
+        ('apertura', 'img/ejercicios/AperturaPeckDeck.jpg'),
+        ('inclinado', 'img/ejercicios/PressInclinado.jpg'),
+        ('frances', 'img/ejercicios/PressFrances.jpg'),
+        ('militar', 'img/ejercicios/PressMilitar.jpg'),
+        ('banca', 'img/ejercicios/PressBanca.jpg'),
+        ('bayesian', 'img/ejercicios/CurlBayesian.jpg'),
+        ('martillo', 'img/ejercicios/CurlMartillo.jpg'),
+        ('curl', 'img/ejercicios/CurlBiceps.jpg'),
+        ('bicep', 'img/ejercicios/CurlBiceps.jpg'),
+        ('lateral', 'img/ejercicios/Elevlat.jpg'),
+        ('elevacion', 'img/ejercicios/Elevlat.jpg'),
+        ('reverse', 'img/ejercicios/ReverseFlu.jpg'),
+        ('pajaro', 'img/ejercicios/ReverseFlu.jpg'),
+        ('polea alta', 'img/ejercicios/EXtpoleaAlta.jpg'),
+        ('extension', 'img/ejercicios/EXtpoleaAlta.jpg'),
+        ('polea baja', 'img/ejercicios/TriPoleaBaja.jpg'),
+        ('trasnuca', 'img/ejercicios/TriPoleaBaja.jpg'),
+        ('tricep', 'img/ejercicios/TriPoleaBaja.jpg'),
+        ('remo maquina', 'img/ejercicios/RemoMaquina.jpg'),
+        ('remo en maquina', 'img/ejercicios/RemoMaquina.jpg'),
+        ('remo t', 'img/ejercicios/RemoT.jpg'),
+        ('barra t', 'img/ejercicios/RemoT.jpg'),
+        ('remo v', 'img/ejercicios/RemoV.jpg'),
+        ('agarre v', 'img/ejercicios/RemoV.jpg'),
+        ('remo', 'img/ejercicios/RemoV.jpg'),
+    ]
+
+    for clave, ruta in mapa_imagenes:
+        if clave in nombre_limpio:
+            return ruta
+    return None
 
 
 # Página Principal (Clasificación por círculos, sin actividad reciente)
@@ -370,7 +418,7 @@ def responder_invitacion(request, pk):
 
 # Vistas de Ejercicios (agrupados en 3 bloques: Tren Superior, Tren Inferior y Core)
 def lista_ejercicios(request):
-    ejercicios = Ejercicio.objects.all().order_by('nombre')
+    ejercicios = list(Ejercicio.objects.all().order_by('nombre'))
     bloques = {
         'TREN_SUPERIOR': {
             'codigo': 'TREN_SUPERIOR',
@@ -393,6 +441,7 @@ def lista_ejercicios(request):
     }
 
     for ej in ejercicios:
+        ej.imagen_url = _obtener_imagen_ejercicio(ej)
         clave = _clasificar_bloque_muscular(ej)
         bloques[clave]['ejercicios'].append(ej)
 
@@ -401,41 +450,15 @@ def lista_ejercicios(request):
     return render(request, 'ejercicios/lista.html', {
         'ejercicios': ejercicios,
         'grupos_ejercicios': grupos_ejercicios,
-        'total_ejercicios': ejercicios.count(),
+        'total_ejercicios': len(ejercicios),
     })
 
 
 def detalle_ejercicio(request, pk):
-    import unicodedata
-
     ejercicio = get_object_or_404(Ejercicio, pk=pk)
-
-    nombre_limpio = ''.join(
-        c for c in unicodedata.normalize('NFKD', ejercicio.nombre.lower())
-        if not unicodedata.combining(c)
-    )
-
-    mapa_imagenes = [
-        ('sentadilla', 'img/ejercicios/Sentadilla.jpg'),
-        ('plancha', 'img/ejercicios/PlanchaPlana.jpg'),
-        ('dominada', 'img/ejercicios/Dominada.jpg'),
-        ('curl', 'img/ejercicios/CurlBiceps.jpg'),
-        ('bicep', 'img/ejercicios/CurlBiceps.jpg'),
-        ('banca', 'img/ejercicios/PressBanca.jpg'),
-        ('frances', 'img/ejercicios/PressFrances.jpg'),
-        ('militar', 'img/ejercicios/PressMilitar.jpg'),
-        ('jalon', 'img/ejercicios/JalonPecho.jpg'),
-    ]
-
-    imagen_ejercicio = None
-    for clave, ruta in mapa_imagenes:
-        if clave in nombre_limpio:
-            imagen_ejercicio = ruta
-            break
-
     return render(request, 'ejercicios/detalle.html', {
         'ejercicio': ejercicio,
-        'imagen_ejercicio': imagen_ejercicio,
+        'imagen_ejercicio': _obtener_imagen_ejercicio(ejercicio),
     })
 
 
