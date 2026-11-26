@@ -1,0 +1,544 @@
+[
+{
+  "model": "FitrivalsApp.usuario",
+  "pk": 1,
+  "fields": {
+    "nombre": "Eneko Erdozain",
+    "email": "eneko.erdozain@gmail.com",
+    "password": "pbkdf2_sha256$1500000$YKjlPWR0kJoVYONqmeXODz$WeR8OTwNHTy8ybBNFPY4P7Me0wyd52CSqAn7s71mlpk=",
+    "fecha_alta": "2026-11-06",
+    "puntos": 86
+  }
+},
+{
+  "model": "FitrivalsApp.usuario",
+  "pk": 2,
+  "fields": {
+    "nombre": "Jon Z",
+    "email": "jonz@gmail.com",
+    "password": "pbkdf2_sha256$1500000$AFnUxrwVxJbsJ9j43BciGS$zXfMO26ucNWSS6irQR9FVh+xP35JTmTtG51xKEzoQZI=",
+    "fecha_alta": "2026-11-06",
+    "puntos": 3
+  }
+},
+{
+  "model": "FitrivalsApp.usuario",
+  "pk": 4,
+  "fields": {
+    "nombre": "Dvid Zhu",
+    "email": "d.zhu@opendeusto.es",
+    "password": "pbkdf2_sha256$1500000$dms0RMb0pnrQC9Vu87ac8R$HpwYxV/NAMjiNCQQ+Qd5qzCDmGGiOsG+yzETWW79DdY=",
+    "fecha_alta": "2026-11-08",
+    "puntos": 3
+  }
+},
+{
+  "model": "FitrivalsApp.usuario",
+  "pk": 5,
+  "fields": {
+    "nombre": "Jon zeta",
+    "email": "jon.zaldivar@opendeusto.es",
+    "password": "pbkdf2_sha256$1500000$AYgE5VUaTohTii4B068eOV$qJn4POmfEHYbelwYoHRAV+zrAMn1VAPPPxSKGEZP+bA=",
+    "fecha_alta": "2026-11-23",
+    "puntos": 0
+  }
+},
+{
+  "model": "FitrivalsApp.usuario",
+  "pk": 6,
+  "fields": {
+    "nombre": "Eneko",
+    "email": "eneko.a.e@opendeusto.es",
+    "password": "pbkdf2_sha256$1500000$CUDAEGjf81pRBcQy7cq0LD$Lx4BnfMXn36keY165llY3woDovID8d/8nbBFduT9VDA=",
+    "fecha_alta": "2026-11-23",
+    "puntos": 0
+  }
+},
+{
+  "model": "FitrivalsApp.usuario",
+  "pk": 7,
+  "fields": {
+    "nombre": "AL",
+    "email": "alexander.loustaunau@opendeusto.es",
+    "password": "pbkdf2_sha256$1500000$hT0oNn2mnextmFVFWHEiwb$oeeHhcwTq+JqDaWL9noOAUjs0QANBr2jQkGp3XPaGzY=",
+    "fecha_alta": "2026-11-23",
+    "puntos": 0
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 1,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Sentadilla",
+    "grupo_muscular": "PIERNA",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 2,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Dominada",
+    "grupo_muscular": "ESPALDA",
+    "dificultad": "INTERMEDIO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 3,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Press de Banca",
+    "grupo_muscular": "PECHO",
+    "dificultad": "INTERMEDIO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 4,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Press militar",
+    "grupo_muscular": "HOMBROS",
+    "dificultad": "AVANZADO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 5,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Press frances",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "AVANZADO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 6,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Plancha plana",
+    "grupo_muscular": "CORE",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 7,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Jalón al pecho",
+    "grupo_muscular": "ESPALDA",
+    "dificultad": "INTERMEDIO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 8,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Curl de biceps",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 9,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Sentadilla bulgara",
+    "grupo_muscular": "PIERNA",
+    "dificultad": "INTERMEDIO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 10,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Press inclinado",
+    "grupo_muscular": "PECHO",
+    "dificultad": "INTERMEDIO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 11,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Aperturas en peck deck",
+    "grupo_muscular": "PECHO",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 12,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Extension de triceps en polea alta",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 13,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Extension de triceps en polea baja",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 14,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Elevaciones laterales",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 16,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Remo en V",
+    "grupo_muscular": "ESPALDA",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 17,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Remo en T",
+    "grupo_muscular": "ESPALDA",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 18,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Curl martillo",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 19,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Curl bayesian",
+    "grupo_muscular": "BRAZOS",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 20,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Remo maquina",
+    "grupo_muscular": "CORE",
+    "dificultad": "INTERMEDIO"
+  }
+},
+{
+  "model": "FitrivalsApp.ejercicio",
+  "pk": 21,
+  "fields": {
+    "descripcion": "",
+    "nombre": "Reverse flu",
+    "grupo_muscular": "ESPALDA",
+    "dificultad": "FACIL"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamiento",
+  "pk": 2,
+  "fields": {
+    "usuario": 4,
+    "fecha": "2026-11-05",
+    "reto": null,
+    "duracion_minutos": 35,
+    "notas": "Pierna y espalda"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamiento",
+  "pk": 3,
+  "fields": {
+    "usuario": 1,
+    "fecha": "2026-11-08",
+    "reto": null,
+    "duracion_minutos": 64,
+    "notas": "Pecho hombro triceps"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamiento",
+  "pk": 4,
+  "fields": {
+    "usuario": 2,
+    "fecha": "2026-11-06",
+    "reto": null,
+    "duracion_minutos": 72,
+    "notas": "Espalda biceps"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamiento",
+  "pk": 5,
+  "fields": {
+    "usuario": 1,
+    "fecha": "2026-11-07",
+    "reto": null,
+    "duracion_minutos": 30,
+    "notas": "Pierna y core"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamiento",
+  "pk": 7,
+  "fields": {
+    "usuario": 1,
+    "fecha": "2026-11-25",
+    "reto": null,
+    "duracion_minutos": 30,
+    "notas": ""
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 3,
+  "fields": {
+    "entrenamiento": 2,
+    "ejercicio": 1,
+    "series": 4,
+    "repeticiones": 15,
+    "peso_kg": "15.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 4,
+  "fields": {
+    "entrenamiento": 2,
+    "ejercicio": 2,
+    "series": 3,
+    "repeticiones": 10,
+    "peso_kg": "72.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 5,
+  "fields": {
+    "entrenamiento": 3,
+    "ejercicio": 3,
+    "series": 5,
+    "repeticiones": 8,
+    "peso_kg": "84.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 6,
+  "fields": {
+    "entrenamiento": 3,
+    "ejercicio": 5,
+    "series": 4,
+    "repeticiones": 12,
+    "peso_kg": "22.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 7,
+  "fields": {
+    "entrenamiento": 3,
+    "ejercicio": 4,
+    "series": 3,
+    "repeticiones": 10,
+    "peso_kg": "18.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 8,
+  "fields": {
+    "entrenamiento": 4,
+    "ejercicio": 7,
+    "series": 4,
+    "repeticiones": 6,
+    "peso_kg": "93.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 9,
+  "fields": {
+    "entrenamiento": 4,
+    "ejercicio": 2,
+    "series": 3,
+    "repeticiones": 8,
+    "peso_kg": "65.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 10,
+  "fields": {
+    "entrenamiento": 4,
+    "ejercicio": 8,
+    "series": 5,
+    "repeticiones": 12,
+    "peso_kg": "15.89"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 11,
+  "fields": {
+    "entrenamiento": 5,
+    "ejercicio": 1,
+    "series": 3,
+    "repeticiones": 12,
+    "peso_kg": "60.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 12,
+  "fields": {
+    "entrenamiento": 5,
+    "ejercicio": 6,
+    "series": 3,
+    "repeticiones": 1,
+    "peso_kg": "10.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 18,
+  "fields": {
+    "entrenamiento": 3,
+    "ejercicio": 5,
+    "series": 1,
+    "repeticiones": 1,
+    "peso_kg": "42.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 19,
+  "fields": {
+    "entrenamiento": 7,
+    "ejercicio": 1,
+    "series": 3,
+    "repeticiones": 10,
+    "peso_kg": "20.00"
+  }
+},
+{
+  "model": "FitrivalsApp.entrenamientoejercicio",
+  "pk": 20,
+  "fields": {
+    "entrenamiento": 7,
+    "ejercicio": 6,
+    "series": 4,
+    "repeticiones": 10,
+    "peso_kg": "0.00"
+  }
+},
+{
+  "model": "FitrivalsApp.reto",
+  "pk": 1,
+  "fields": {
+    "nombre": "Full body al fallo",
+    "descripcion": "El objetivo de este reto es hacer un entrenamiento de cuerpo completo realizando ejercicios de todos los grupos musculares.",
+    "puntos_recompensa": 10,
+    "fecha_inicio": "2026-11-23",
+    "fecha_fin": "2026-11-30",
+    "ejercicios": [],
+    "completado_por": []
+  }
+},
+{
+  "model": "FitrivalsApp.reto",
+  "pk": 2,
+  "fields": {
+    "nombre": "Press banca 100x8",
+    "descripcion": "Lograr una serie completa (8 reps) con 100 kilos",
+    "puntos_recompensa": 300,
+    "fecha_inicio": "2026-11-23",
+    "fecha_fin": "2026-11-30",
+    "ejercicios": [],
+    "completado_por": []
+  }
+},
+{
+  "model": "FitrivalsApp.reto",
+  "pk": 3,
+  "fields": {
+    "nombre": "Sentadilla 100",
+    "descripcion": "Logra ser el primero en completar una sentadilla con 100 kilos",
+    "puntos_recompensa": 100,
+    "fecha_inicio": "2026-11-23",
+    "fecha_fin": "2026-11-30",
+    "ejercicios": [],
+    "completado_por": []
+  }
+},
+{
+  "model": "FitrivalsApp.reto",
+  "pk": 4,
+  "fields": {
+    "nombre": "Disciplina navy seal",
+    "descripcion": "Logra completar un entrenamiento de 60 minutos mínimo en todos los días de un mes",
+    "puntos_recompensa": 1000,
+    "fecha_inicio": "2026-11-23",
+    "fecha_fin": "2026-11-30",
+    "ejercicios": [],
+    "completado_por": []
+  }
+},
+{
+  "model": "FitrivalsApp.reto",
+  "pk": 5,
+  "fields": {
+    "nombre": "Recompensa diaria",
+    "descripcion": "Completa un entrenamiento de 30 minutos cada día para obtener esta recompensa",
+    "puntos_recompensa": 3,
+    "fecha_inicio": "2026-11-23",
+    "fecha_fin": "2026-11-30",
+    "ejercicios": [],
+    "completado_por": []
+  }
+},
+{
+  "model": "FitrivalsApp.reto",
+  "pk": 6,
+  "fields": {
+    "nombre": "Press frances 30",
+    "descripcion": "Logra una repeticion en press francés con al menos 40 kilos",
+    "puntos_recompensa": 80,
+    "fecha_inicio": "2026-11-23",
+    "fecha_fin": "2026-11-30",
+    "ejercicios": [],
+    "completado_por": []
+  }
+}
+]
