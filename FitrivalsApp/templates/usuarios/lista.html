@@ -58,4 +58,17 @@
             </div>
         {% endfor %}
     </div>
+        {% if pagina.has_other_pages %}
+        <div class="paginacion">
+            {% if pagina.has_previous %}
+                <a href="?page={{ pagina.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}" class="btn-secondary-strava">← Anterior</a>
+            {% endif %}
+
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+
+            {% if pagina.has_next %}
+                <a href="?page={{ pagina.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}" class="btn-secondary-strava">Siguiente →</a>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}

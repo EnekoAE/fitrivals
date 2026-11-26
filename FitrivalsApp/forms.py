@@ -1,6 +1,6 @@
 from django import forms
 from .models import Usuario, Entrenamiento, Circulo
-
+from django.contrib.auth.password_validation import validate_password
 
 class RegistroUsuarioForm(forms.ModelForm):
     password = forms.CharField(
@@ -28,6 +28,15 @@ class RegistroUsuarioForm(forms.ModelForm):
                 'required': True,
             }),
         }
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        usuario_temporal = Usuario(
+            nombre=self.cleaned_data.get('nombre', ''),
+            email=self.cleaned_data.get('email', ''),
+        )
+        validate_password(password, user=usuario_temporal)
+        return password
+    
 
 
 class LoginUsuarioForm(forms.Form):

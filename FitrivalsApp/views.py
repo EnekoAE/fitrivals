@@ -7,6 +7,7 @@ from django.db.models import F, Q
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator
 from django.views.generic import ListView, DetailView
 from .models import (
     Usuario, Circulo, InvitacionCirculo,
@@ -137,10 +138,14 @@ def lista_usuarios(request):
     if query:
         atletas = atletas.filter(nombre__icontains=query)
 
+    paginator = Paginator(atletas, 6)                       
+    pagina = paginator.get_page(request.GET.get('page'))    
+
     mis_circulos_anfitrion = Circulo.objects.filter(anfitrion=yo).order_by('nombre')
 
     return render(request, 'usuarios/lista.html', {
-        'atletas': atletas,
+        'atletas': pagina,
+        'pagina': pagina,
         'query': query,
         'mis_circulos_anfitrion': mis_circulos_anfitrion,
     })
