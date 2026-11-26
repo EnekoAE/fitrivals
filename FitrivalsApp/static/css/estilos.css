@@ -1,6 +1,4 @@
-/* ==========================================================
-   estilos.css - FitRivals (Estilo Blanco + Naranja Strava)
-   ========================================================== */
+/* estilos.css - FitRivals (Estilo Blanco + Naranja Strava) */
 
    :root {
     --strava-orange: #FC4C02;
@@ -287,7 +285,7 @@
     border-radius: 999px;
   }
   
-  /* ---------- Formularios públicos (E4a Opción 3) ---------- */
+  /*Formularios públicos */
   .form-card {
     background-color: var(--bg-white);
     border: 1px solid var(--border-light);
@@ -330,14 +328,14 @@
     border-color: var(--strava-orange);
   }
   
-  /* ---------- Responsive ---------- */
+  /* Responsive */
   @media (max-width: 600px) {
     .hero-card {
       padding: 1.35rem;
     }
     
   }
-  /* ---------- Cabecera y detalles de sección ---------- */
+  /* Cabecera y detalles de sección */
 .section-header {
   display: flex;
   flex-wrap: wrap;
@@ -369,4 +367,14 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 1.5rem;
+}
+
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }
