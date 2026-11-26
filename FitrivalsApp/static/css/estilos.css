@@ -1,15 +1,15 @@
 :root {
-  --strava-orange: #FC4C02;
-  --strava-orange-hover: #E34402;
-  --strava-orange-soft: rgba(252, 76, 2, 0.15);
-  --bg-page: #111315;
-  --bg-white: #1A1D21;
-  --text-dark: #F3F4F6;
-  --text-muted: #9BA3AF;
-  --border-light: #2B3036;
-  --radius: 10px;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
+  --strava-orange: #FC5200;
+  --strava-orange-hover: #E04A00;
+  --strava-orange-soft: rgba(252, 82, 0, 0.08);
+  --bg-page: #FFFFFF;
+  --bg-white: #FFFFFF;
+  --bg-soft: #F7F6F2;
+  --text-dark: #242428;
+  --text-muted: #6D6D78;
+  --border-light: #E6E6EB;
+  --border-strong: #CCCCD0;
+  --radius: 6px;
 }
 
 *, *::before, *::after {
@@ -37,88 +37,45 @@ html, body {
   color: #FFFFFF;
 }
 
-.fondo-pagina {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 520px;
-  background: linear-gradient(to bottom, rgba(17, 19, 21, 0.3), #111315),
-              var(--imagen, url("../img/fondos/inicio.jpg")) center / cover;
-}
-
-.vista-lista_retos, .vista-detalle_reto, .vista-completar_reto       { --imagen: url("../img/fondos/retos.jpg"); }
-.vista-lista_ejercicios, .vista-detalle_ejercicio                    { --imagen: url("../img/fondos/ejercicios.jpg"); }
-.vista-lista_circulos, .vista-detalle_circulo, .vista-crear_circulo  { --imagen: url("../img/fondos/circulos.jpg"); }
-.vista-lista_usuarios, .vista-detalle_usuario                        { --imagen: url("../img/fondos/atletas.jpg"); }
-.vista-crear_entrenamiento, .vista-detalle_entrenamiento             { --imagen: url("../img/fondos/entrenamientos.jpg"); }
-.vista-login_usuario, .vista-registro_usuario                        { --imagen: url("../img/fondos/acceso.jpg"); }
-
 .main-wrapper {
-  position: relative;
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 2.5rem auto;
   padding: 0 1.5rem;
   min-height: calc(100vh - 200px);
-  animation: aparecer 0.6s ease;
-}
-
-@keyframes aparecer {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: none; }
 }
 
 .mensajes { list-style: none; padding: 0; margin: 0 0 1.25rem; }
-.mensaje { padding: 0.8rem 1.1rem; border-radius: 6px; font-weight: 600; margin-bottom: 0.5rem; }
+.mensaje { padding: 0.8rem 1.1rem; border-radius: 4px; font-weight: 600; margin-bottom: 0.5rem; }
 .mensaje-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
 .mensaje-error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
 
 h1 {
   margin: 0 0 0.75rem;
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  background: linear-gradient(180deg, #FFFFFF 40%, #B8BDC6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-h2 {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin: 2rem 0 1rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   color: var(--text-dark);
 }
 
-h2::before {
-  content: "";
-  width: 4px;
-  height: 1.15em;
-  border-radius: 2px;
-  background-color: var(--strava-orange);
-  box-shadow: 0 0 12px rgba(252, 76, 2, 0.8);
+h2 {
+  margin: 2rem 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-dark);
 }
 
 h3 {
   margin: 0 0 0.5rem;
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dark);
 }
 
 a {
   color: var(--strava-orange);
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
-  transition: color 0.15s ease;
 }
 
 a:hover {
@@ -132,25 +89,22 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.65rem 1.35rem;
+  padding: 0.75rem 1.5rem;
   background-color: var(--strava-orange);
   color: #FFFFFF;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
-  box-shadow: 0 6px 20px rgba(252, 76, 2, 0.35);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: background-color 0.15s ease;
 }
 
 .btn-primary-strava:hover {
   background-color: var(--strava-orange-hover);
   color: #FFFFFF;
   text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(252, 76, 2, 0.5);
 }
 
 .btn-primary-strava:disabled {
@@ -163,38 +117,32 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.65rem 1.35rem;
-  background-color: transparent;
-  color: #FFFFFF;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  background-color: #FFFFFF;
+  color: var(--text-dark);
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 .btn-secondary-strava:hover {
-  background-color: #FFFFFF;
-  color: #111315;
-  border-color: #FFFFFF;
+  border-color: var(--text-dark);
+  color: var(--text-dark);
   text-decoration: none;
 }
 
 .dashboard-hero {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .hero-card {
-  background-color: rgba(26, 29, 33, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left-width: 5px;
-  border-top-color: rgba(255, 255, 255, 0.22);
+  background-color: var(--bg-soft);
   border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
+  padding: 2.5rem;
 }
 
 .badge-orange {
@@ -204,14 +152,14 @@ a:hover {
   background-color: var(--strava-orange-soft);
   color: var(--strava-orange);
   font-size: 0.75rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.05em;
   border-radius: 4px;
   text-transform: uppercase;
 }
 
 .hero-card p {
-  margin: 0 0 1.4rem;
+  margin: 0 0 1.5rem;
   color: var(--text-muted);
   max-width: 650px;
 }
@@ -232,36 +180,29 @@ a:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: rgba(26, 29, 33, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top-color: rgba(255, 255, 255, 0.22);
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius);
   padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .info-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-  border-color: rgba(252, 76, 2, 0.35);
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
 .info-card p {
   margin: 0 0 1.2rem;
   color: var(--text-muted);
-  font-size: 0.94rem;
+  font-size: 0.95rem;
 }
 
 .card-link {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--strava-orange);
 }
-
-.main-wrapper img { transition: transform 0.4s; }
-.main-wrapper img:hover { transform: scale(1.03); }
 
 .main-wrapper > ul {
   display: grid;
@@ -273,26 +214,20 @@ a:hover {
 
 .main-wrapper > ul > li {
   padding: 1rem 1.25rem;
-  background-color: var(--bg-white);
+  background-color: #FFFFFF;
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .main-wrapper > ul > li:hover {
-  border-color: var(--strava-orange);
-  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
 }
 
 .strava-table-wrapper {
-  background-color: rgba(26, 29, 33, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top-color: rgba(255, 255, 255, 0.22);
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius);
   overflow-x: auto;
-  box-shadow: var(--shadow-sm);
 }
 
 .strava-table {
@@ -304,11 +239,11 @@ a:hover {
 
 .strava-table th {
   padding: 0.9rem 1.2rem;
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: var(--bg-soft);
   border-bottom: 1px solid var(--border-light);
-  color: #FFFFFF;
+  color: var(--text-muted);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -323,29 +258,26 @@ a:hover {
   border-bottom: none;
 }
 
-.strava-table tr:hover td { background-color: rgba(252, 76, 2, 0.06); }
-.strava-table tbody tr:first-child td { background-color: rgba(252, 76, 2, 0.08); }
-.strava-table tbody tr:first-child td:first-child strong { color: #FBBF24; }
+.strava-table tr:hover td {
+  background-color: #FAFAF8;
+}
 
 .points-badge {
   display: inline-block;
   padding: 0.25rem 0.65rem;
-  background: linear-gradient(135deg, #FC4C02, #FF8A3D);
-  color: #FFFFFF;
-  font-weight: 800;
+  background-color: var(--strava-orange-soft);
+  color: var(--strava-orange);
+  font-weight: 700;
   font-size: 0.85rem;
   border-radius: 999px;
 }
 
 .form-card {
-  background-color: rgba(26, 29, 33, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top-color: rgba(255, 255, 255, 0.22);
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  padding: 1.75rem;
+  padding: 2rem;
   max-width: 600px;
-  box-shadow: var(--shadow-sm);
 }
 
 .form-group {
@@ -355,45 +287,31 @@ a:hover {
 .form-group label {
   display: block;
   margin-bottom: 0.4rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-dark);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 0.65rem 0.85rem;
-  border-radius: 6px;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background-color: #FFFFFF;
   transition: border-color 0.15s ease;
 }
 
-input, select, textarea, body .catalogo-buscador {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-}
-
-input:focus, select:focus, textarea:focus, body .catalogo-buscador:focus {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
-  border-color: #FFFFFF !important;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  border-color: var(--text-dark);
 }
-
-input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
-select option { background-color: #1A1D21; color: #FFFFFF; }
-
-body .catalogo-toolbar {
-  background-color: rgba(26, 29, 33, 0.85);
-  backdrop-filter: blur(10px);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-body .grupo-cabecera { border-bottom-color: #2B3036; }
-body .dificultad-pill { background-color: rgba(255, 255, 255, 0.08); }
 
 .section-header {
   display: flex;
@@ -435,16 +353,11 @@ body .dificultad-pill { background-color: rgba(255, 255, 255, 0.08); }
   gap: 1rem;
   margin-top: 1.5rem;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 500;
 }
-
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #0C0D0F; }
-::-webkit-scrollbar-thumb { background: #2B3036; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #FC4C02; }
 
 @media (max-width: 600px) {
   .hero-card {
-    padding: 1.35rem;
+    padding: 1.5rem;
   }
 }
