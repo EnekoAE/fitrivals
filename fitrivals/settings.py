@@ -84,3 +84,25 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Seguridad 
+from django.core.exceptions import ImproperlyConfigured
+
+SESSION_COOKIE_HTTPONLY = True          
+SESSION_COOKIE_AGE = 60 * 60 * 2        
+X_FRAME_OPTIONS = 'DENY'               
+SECURE_CONTENT_TYPE_NOSNIFF = True      
+SECURE_REFERRER_POLICY = 'same-origin'  
+
+
+if not DEBUG:
+    
+    if SECRET_KEY.startswith('django-insecure'):
+        raise ImproperlyConfigured('Define la variable de entorno DJANGO_SECRET_KEY en producción.')
+
+    SECURE_SSL_REDIRECT = True                 # W008
+    SESSION_COOKIE_SECURE = True               # W012
+    CSRF_COOKIE_SECURE = True                  # W016
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30    # W004
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True

@@ -7,10 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
     <link rel="stylesheet" href="{% static 'css/header-footer.css' %}">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
     {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="vista-{{ request.resolver_match.url_name }}">
+    <div class="fondo-pagina"></div>
 
     <header class="site-header">
         <div class="header-container">
@@ -19,8 +20,8 @@
             </a>
 
             <nav class="site-nav">
-                <a href="{% url 'lista_entrenamientos' %}" class="{% if 'entrenamiento' in request.resolver_match.url_name %}activo{% endif %}">
-                    Entrenamientos
+                <a href="{% url 'lista_circulos' %}" class="{% if 'circulo' in request.resolver_match.url_name or 'invitacion' in request.resolver_match.url_name %}activo{% endif %}">
+                    Círculos
                 </a>
                 <a href="{% url 'lista_retos' %}" class="{% if 'reto' in request.resolver_match.url_name %}activo{% endif %}">
                     Retos Semanales
@@ -67,14 +68,25 @@
         {% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                FIT<span>RIVALS</span>
+    <footer class="fr-footer">
+        <div class="fr-footer-inner">
+            <div class="fr-footer-brand-row">
+                <span class="fr-footer-line"></span>
+                <span class="fr-footer-logo">FIT<span>RIVALS</span></span>
+                <span class="fr-footer-line"></span>
             </div>
-            <div>
-                &copy; 2026 Fit Rivals. Todos los derechos reservados.
+            <p class="fr-footer-subtitle">
+                Compite en privado dentro de tus círculos, supera los retos semanales y registra tu progreso.
+            </p>
+            <div class="fr-footer-pillars">
+                <span>Círculos Privados</span>
+                <span class="fr-footer-sep">·</span>
+                <span>Retos Semanales</span>
+                <span class="fr-footer-sep">·</span>
+                <span>Entrenamientos</span>
             </div>
+            <div class="fr-footer-divider"></div>
+            <p class="fr-footer-copy">&copy; 2026 Fit Rivals. Todos los derechos reservados.</p>
         </div>
     </footer>
 

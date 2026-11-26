@@ -3,27 +3,183 @@
 {% block title %}Atletas | Fit Rivals{% endblock %}
 
 {% block content %}
-    <div class="section-header">
-        <h1>Atletas registrados</h1>
-        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+    <div class="hero-card" style="margin-bottom: 1.75rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+            <div style="flex: 1; min-width: 260px;">
+                <span class="badge-orange">DIRECTORIO DE ATLETAS</span>
+                <h1>Conecta con otros atletas</h1>
+                <p style="margin-bottom: 1rem;">
+                    Busca compañeros de entrenamiento e invítalos a los círculos que administras. Sus puntos y marcas solo serán visibles dentro de los círculos que compartáis.
+                </p>
+            </div>
+            <div class="hero-actions">
+                <a href="{% url 'crear_circulo' %}" class="btn-primary-strava">+ Crear círculo</a>
+                <a href="{% url 'lista_circulos' %}" class="btn-secondary-strava">Mis círculos</a>
+            </div>
+        </div>
+
+        <form method="get" action="{% url 'lista_usuarios' %}" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: 0.5rem;">
+            <input type="text"
+                   id="buscador-atletas"
+                   name="q"
+                   value="{{ query }}"
+                   placeholder="Buscar atleta por nombre..."
+                   style="flex: 1; min-width: 220px; padding: 0.7rem 0.95rem; border-radius: 6px; border: 1px solid var(--border-strong); font-family: inherit; font-size: 0.95rem;">
+            <button type="submit" class="btn-primary-strava">Buscar</button>
+            {% if query %}
+                <a href="{% url 'lista_usuarios' %}" class="btn-secondary-strava">Limpiar</a>
+            {% endif %}
+        </form>
     </div>
 
-    <div class="strava-table-wrapper">
-        <table class="strava-table">
-            <thead>
-                <tr><th>Posición</th><th>Atleta</th><th>Puntos</th></tr>
-            </thead>
-            <tbody>
-                {% for usuario in usuarios %}
-                <tr>
-                    <td><strong>#{{ forloop.counter }}</strong></td>
-                    <td><a href="{% url 'detalle_usuario' usuario.pk %}">{{ usuario.nombre }}</a></td>
-                    <td><span class="points-badge">{{ usuario.puntos }} pts</span></td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="3">No hay usuarios registrados.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    {% if not mis_circulos_anfitrion %}
+        <div class="info-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--strava-orange);">
+            <p style="margin: 0;">
+                Aún no eres anfitrión de ningún círculo. <a href="{% url 'crear_circulo' %}" class="card-link">Crea tu primer círculo</a> para poder enviar solicitudes a otros atletas.
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="section-header" style="margin-bottom: 1.25rem;">
+        <div class="hero-actions" id="filtros-atletas">
+            <button type="button" class="btn-primary-strava filtro-btn" data-filtro="todos">
+                Todos ({{ pagina.paginator.count }})
+            </button>
+            <button type="button" class="btn-secondary-strava filtro-btn" data-filtro="compartidos">
+                En mis círculos
+            </button>
+            {% if mis_circulos_anfitrion %}
+                <button type="button" class="btn-secondary-strava filtro-btn" data-filtro="invitables">
+                    Disponibles para invitar
+                </button>
+            {% endif %}
+        </div>
     </div>
+
+    <div class="dashboard-grid" id="grid-atletas">
+        {% for atleta in atletas %}
+            <article class="info-card tarjeta-atleta"
+                     data-nombre="{{ atleta.nombre|lower }}"
+                     data-compartido="{% if atleta.circulos_compartidos %}si{% else %}no{% endif %}"
+                     data-invitable="{% if atleta.circulos_invitables %}si{% else %}no{% endif %}">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.9rem;">
+                        <div style="width: 46px; height: 46px; border-radius: 50%; background-color: var(--strava-orange-soft); color: var(--strava-orange); border: 1px solid rgba(252, 82, 0, 0.25); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;">
+                            {{ atleta.nombre|slice:":2"|upper }}
+                        </div>
+                        <div style="min-width: 0;">
+                            <h3 style="margin: 0 0 0.15rem;">
+                                <a href="{% url 'detalle_usuario' atleta.pk %}" style="color: var(--text-dark);">{{ atleta.nombre }}</a>
+                            </h3>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">
+                                En Fit Rivals desde {{ atleta.fecha_alta|date:"M Y" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if atleta.circulos_compartidos %}
+                        <div style="margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                            {% for c in atleta.circulos_compartidos %}
+                                <span style="padding: 0.22rem 0.6rem; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; border-radius: 999px; font-size: 0.78rem; font-weight: 600;">
+                                    ✓ {{ c.nombre }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if atleta.invitaciones_pendientes %}
+                        <div style="margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                            {% for c in atleta.invitaciones_pendientes %}
+                                <span class="points-badge" style="margin-bottom: 0; font-size: 0.78rem;">
+                                    Solicitud pendiente · {{ c.nombre }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div style="border-top: 1px solid var(--border-light); padding-top: 0.9rem; margin-top: 0.4rem;">
+                    {% if atleta.circulos_invitables %}
+                        <form method="post" action="{% url 'invitar_circulo' %}" style="display: flex; gap: 0.5rem; align-items: center;">
+                            {% csrf_token %}
+                            <input type="hidden" name="invitado_id" value="{{ atleta.pk }}">
+                            <input type="hidden" name="next" value="{% url 'lista_usuarios' %}">
+                            <select name="circulo_id" style="flex: 1; min-width: 0; padding: 0.55rem 0.7rem; border-radius: 6px; border: 1px solid var(--border-strong); font-family: inherit; font-size: 0.9rem; background: #fff;">
+                                {% for c in atleta.circulos_invitables %}
+                                    <option value="{{ c.pk }}">{{ c.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn-primary-strava" style="padding: 0.55rem 1rem; font-size: 0.9rem;">
+                                Invitar
+                            </button>
+                        </form>
+                    {% elif mis_circulos_anfitrion %}
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Ya gestionado en tus círculos</span>
+                            <a href="{% url 'detalle_usuario' atleta.pk %}" class="card-link">Ver perfil &rarr;</a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'detalle_usuario' atleta.pk %}" class="card-link">Ver perfil &rarr;</a>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <div class="info-card">
+                <p style="margin: 0;">No se han encontrado atletas con ese nombre.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if pagina.has_other_pages %}
+        <div class="paginacion">
+            {% if pagina.has_previous %}
+                <a href="?page={{ pagina.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}" class="btn-secondary-strava">← Anterior</a>
+            {% endif %}
+
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+
+            {% if pagina.has_next %}
+                <a href="?page={{ pagina.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}" class="btn-secondary-strava">Siguiente →</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    var filtroActual = 'todos';
+
+    function aplicarFiltros() {
+        var texto = $('#buscador-atletas').val().toLowerCase().trim();
+        $('.tarjeta-atleta').each(function() {
+            var $card = $(this);
+            var nombre = $card.data('nombre');
+            var coincideTexto = !texto || nombre.indexOf(texto) !== -1;
+            var coincideTab = true;
+
+            if (filtroActual === 'compartidos') {
+                coincideTab = ($card.data('compartido') === 'si');
+            } else if (filtroActual === 'invitables') {
+                coincideTab = ($card.data('invitable') === 'si');
+            }
+
+            if (coincideTexto && coincideTab) {
+                $card.fadeIn(140);
+            } else {
+                $card.hide();
+            }
+        });
+    }
+
+    $('.filtro-btn').on('click', function() {
+        $('.filtro-btn').removeClass('btn-primary-strava').addClass('btn-secondary-strava');
+        $(this).removeClass('btn-secondary-strava').addClass('btn-primary-strava');
+        filtroActual = $(this).data('filtro');
+        aplicarFiltros();
+    });
+
+    $('#buscador-atletas').on('keyup', aplicarFiltros);
+});
+</script>
 {% endblock %}

@@ -47,24 +47,43 @@
     </table>
 </div>
 
-<h2>Historial de entrenamientos en este reto</h2>
+<h2>Atletas que han completado este reto</h2>
 <div class="strava-table-wrapper">
     <table class="strava-table">
         <thead>
             <tr>
                 <th>Atleta</th>
-                <th>Fecha</th>
-                <th>Duración</th>
-                <th>Sesión</th>
+                <th>Tiempo</th>
+                <th>Peso, series y notas</th>
+                <th>Puntos acumulados</th>
             </tr>
         </thead>
         <tbody>
-            {% for intento in reto.intentos.all %}
+            {% for item in participaciones %}
             <tr>
-                <td><a href="{% url 'detalle_usuario' intento.usuario.pk %}">{{ intento.usuario.nombre }}</a></td>
-                <td>{{ intento.fecha }}</td>
-                <td>{{ intento.duracion_minutos }} min</td>
-                <td><a href="{% url 'detalle_entrenamiento' intento.pk %}" class="card-link">Ver marcas →</a></td>
+                <td><a href="{% url 'detalle_usuario' item.usuario.pk %}"><strong>{{ item.usuario.nombre }}</strong></a></td>
+                <td>
+                    {% if item.intento %}
+                        <strong>{{ item.intento.duracion_minutos }} min</strong>
+                    {% else %}
+                        <span style="color: var(--text-muted);">Sin tiempo</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.marcas %}
+                        {% for m in item.marcas %}
+                            <div>{{ m.ejercicio.nombre }}: <strong>{{ m.peso_kg }} kg</strong> ({{ m.series }}x{{ m.repeticiones }})</div>
+                        {% endfor %}
+                        {% if item.intento.notas %}
+                            <small style="color: var(--text-muted);">{{ item.intento.notas }}</small>
+                        {% endif %}
+                    {% elif item.intento %}
+                        <div>{{ item.intento.notas|default:"Completado" }}</div>
+                    {% else %}
+                        <span style="color: var(--text-muted);">Registrado antes de activar marcas</span>
+                    {% endif %}
+                </td>
+                <td><span class="points-badge">{{ item.usuario.puntos }} pts</span></td>
             </tr>
             {% empty %}
             <tr>

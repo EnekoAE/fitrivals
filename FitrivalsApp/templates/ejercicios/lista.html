@@ -1,29 +1,270 @@
 {% extends 'base.html' %}
 
-{% block title %}Catálogo de Ejercicios | Fit Rivals{% endblock %}
+{% block title %}Catálogo de Ejercicios - Fit Rivals{% endblock %}
+
+{% block extra_head %}
+<style>
+    .catalogo-toolbar {
+        background: #ffffff;
+        border: 1px solid #e6e8ec;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2.25rem;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .catalogo-filtros {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .catalogo-buscador {
+        width: 100%;
+        max-width: 360px;
+        padding: 0.65rem 0.95rem;
+        border: 1px solid #d7dce3;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #fafbfc;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    .catalogo-buscador:focus {
+        outline: none;
+        border-color: #fc4c02;
+        background: #ffffff;
+    }
+
+    .grupo-seccion {
+        margin-bottom: 3rem;
+    }
+
+    .grupo-cabecera {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-bottom: 0.85rem;
+        margin-bottom: 1.35rem;
+        border-bottom: 2px solid #eceef2;
+    }
+
+    .grupo-titulo-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .grupo-indicador {
+        width: 5px;
+        height: 36px;
+        border-radius: 4px;
+        background: #fc4c02;
+        display: inline-block;
+        margin-top: 2px;
+    }
+
+    .grupo-cabecera h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        line-height: 1.2;
+    }
+
+    .grupo-subtitulo {
+        margin: 0.25rem 0 0 0;
+        font-size: 0.9rem;
+        color: #667085;
+    }
+
+    .card-top-badges {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .dificultad-pill {
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+    }
+
+    .dificultad-facil {
+        background: #eafaf1;
+        color: #1e7e46;
+    }
+
+    .dificultad-intermedio {
+        background: #fff6e5;
+        color: #b26a00;
+    }
+
+    .dificultad-avanzado {
+        background: #fdecec;
+        color: #b42318;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    <div class="section-header">
-        <h1>Catálogo de Ejercicios</h1>
-        <a href="{% url 'index' %}" class="btn-secondary-strava">← Volver al Índice</a>
+<div class="section-header" style="align-items: flex-start; margin-bottom: 1.5rem;">
+    <div>
+        <h1 style="margin-bottom: 0.35rem;">Catálogo de Ejercicios</h1>
+        <p style="margin: 0; color: #667085;">
+            {{ total_ejercicios }} ejercicio{{ total_ejercicios|pluralize:"s" }} dividido{{ total_ejercicios|pluralize:"s" }} en Tren Superior, Tren Inferior y Core
+        </p>
     </div>
+    <a href="{% url 'index' %}" class="btn-secondary-strava">&larr; Volver al Índice</a>
+</div>
 
-    <div class="dashboard-grid">
-        {% for ejercicio in ejercicios %}
-            <div class="info-card">
-                <div>
-                    <span class="points-badge">{{ ejercicio.get_grupo_muscular_display }}</span>
-                    <h3>{{ ejercicio.nombre }}</h3>
-                    <p><strong>Dificultad:</strong> {{ ejercicio.get_dificultad_display }}</p>
-                </div>
-                <a href="{% url 'detalle_ejercicio' ejercicio.pk %}" class="card-link">
-                    Ver detalle →
-                </a>
-            </div>
-        {% empty %}
-            <div class="info-card">
-                <p>No hay ejercicios registrados.</p>
-            </div>
-        {% endfor %}
+{% if grupos_ejercicios %}
+<div class="catalogo-toolbar">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+        <div class="catalogo-filtros" id="filtros-grupo">
+            <button type="button" class="btn-primary-strava filtro-btn" data-filtro="TODOS">
+                Todos ({{ total_ejercicios }})
+            </button>
+            {% for grupo in grupos_ejercicios %}
+                <button type="button" class="btn-secondary-strava filtro-btn" data-filtro="{{ grupo.codigo }}">
+                    {{ grupo.nombre }} ({{ grupo.ejercicios|length }})
+                </button>
+            {% endfor %}
+        </div>
+
+        <input type="text"
+               id="buscador-ejercicios"
+               class="catalogo-buscador"
+               placeholder="Buscar ejercicio o músculo..."
+               aria-label="Buscar ejercicio o músculo">
     </div>
-{% endblock %}  
+</div>
+
+<div id="contenedor-grupos">
+    {% for grupo in grupos_ejercicios %}
+    <section class="grupo-seccion" data-grupo="{{ grupo.codigo }}">
+        <div class="grupo-cabecera">
+            <div class="grupo-titulo-wrap">
+                <span class="grupo-indicador"></span>
+                <div>
+                    <h2>{{ grupo.nombre }}</h2>
+                    <p class="grupo-subtitulo">{{ grupo.subtitulo }}</p>
+                </div>
+            </div>
+            <span class="points-badge">
+                {{ grupo.ejercicios|length }} ejercicio{{ grupo.ejercicios|length|pluralize:"s" }}
+            </span>
+        </div>
+
+        <div class="dashboard-grid">
+            {% for ej in grupo.ejercicios %}
+            <article class="info-card ejercicio-card" data-busqueda="{{ ej.nombre|lower }} {{ ej.get_grupo_muscular_display|lower }}">
+                <div>
+                    <div class="card-top-badges">
+                        <span class="badge-orange" style="margin-bottom: 0;">{{ ej.get_grupo_muscular_display }}</span>
+                        {% with dif=ej.get_dificultad_display %}
+                            <span class="dificultad-pill {% if 'Fácil' in dif or 'Facil' in dif %}dificultad-facil{% elif 'Intermedio' in dif %}dificultad-intermedio{% else %}dificultad-avanzado{% endif %}">
+                                {{ dif }}
+                            </span>
+                        {% endwith %}
+                    </div>
+
+                    <h3 style="margin-bottom: 0.45rem;">{{ ej.nombre }}</h3>
+
+                    {% if ej.descripcion %}
+                        <p style="font-size: 0.92rem; color: #667085; margin-bottom: 0.75rem;">
+                            {{ ej.descripcion|truncatewords:18 }}
+                        </p>
+                    {% else %}
+                        <p style="font-size: 0.92rem; color: #667085; margin-bottom: 0.75rem;">
+                            Enfoque principal en <strong>{{ ej.get_grupo_muscular_display|lower }}</strong> · Nivel {{ ej.get_dificultad_display|lower }}.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <a href="{% url 'detalle_ejercicio' ej.pk %}" class="card-link">Ver detalle &rarr;</a>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+<div id="sin-resultados" class="info-card" style="display: none; text-align: center; padding: 2rem;">
+    <h3 style="margin-bottom: 0.4rem;">No se encontraron ejercicios</h3>
+    <p style="margin: 0; color: #667085;">Prueba con otro término o selecciona «Todos» en el filtro superior.</p>
+</div>
+{% else %}
+<div class="info-card">
+    <p style="margin: 0;">Todavía no hay ejercicios registrados en el catálogo.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const botones = document.querySelectorAll('.filtro-btn');
+    const buscador = document.getElementById('buscador-ejercicios');
+    const secciones = document.querySelectorAll('.grupo-seccion');
+    const avisoVacio = document.getElementById('sin-resultados');
+
+    let grupoActivo = 'TODOS';
+
+    function normalizar(texto) {
+        return texto
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function aplicarFiltros() {
+        const consulta = normalizar(buscador ? buscador.value.trim() : '');
+        let totalVisibles = 0;
+
+        secciones.forEach(function (seccion) {
+            const codigoGrupo = seccion.getAttribute('data-grupo');
+            const coincideGrupo = (grupoActivo === 'TODOS' || codigoGrupo === grupoActivo);
+            const tarjetas = seccion.querySelectorAll('.ejercicio-card');
+            let visiblesEnGrupo = 0;
+
+            tarjetas.forEach(function (tarjeta) {
+                const textoTarjeta = normalizar(tarjeta.getAttribute('data-busqueda') || '');
+                const mostrar = coincideGrupo && (!consulta || textoTarjeta.includes(consulta));
+                tarjeta.style.display = mostrar ? '' : 'none';
+                if (mostrar) {
+                    visiblesEnGrupo++;
+                    totalVisibles++;
+                }
+            });
+
+            seccion.style.display = visiblesEnGrupo > 0 ? '' : 'none';
+        });
+
+        if (avisoVacio) {
+            avisoVacio.style.display = totalVisibles === 0 ? 'block' : 'none';
+        }
+    }
+
+    botones.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            grupoActivo = this.getAttribute('data-filtro');
+            botones.forEach(function (b) {
+                b.classList.remove('btn-primary-strava');
+                b.classList.add('btn-secondary-strava');
+            });
+            this.classList.remove('btn-secondary-strava');
+            this.classList.add('btn-primary-strava');
+            aplicarFiltros();
+        });
+    });
+
+    if (buscador) {
+        buscador.addEventListener('input', aplicarFiltros);
+    }
+});
+</script>
+{% endblock %}
