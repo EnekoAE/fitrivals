@@ -134,14 +134,37 @@ def lista_usuarios(request):
     yo = get_object_or_404(Usuario, pk=usuario_id)
     query = request.GET.get('q', '').strip()
 
-    atletas = Usuario.objects.exclude(pk=yo.pk).order_by('nombre')
+    atletas_qs = Usuario.objects.exclude(pk=yo.pk).order_by('nombre')
     if query:
-        atletas = atletas.filter(nombre__icontains=query)
+        atletas_qs = atletas_qs.filter(nombre__icontains=query)
 
-    paginator = Paginator(atletas, 6)                       
-    pagina = paginator.get_page(request.GET.get('page'))    
+    paginator = Paginator(atletas_qs, 6)
+    pagina = paginator.get_page(request.GET.get('page'))
 
-    mis_circulos_anfitrion = Circulo.objects.filter(anfitrion=yo).order_by('nombre')
+    mis_circulos = list(yo.circulos.prefetch_related('miembros').order_by('nombre'))
+    mis_circulos_anfitrion = [c for c in mis_circulos if c.anfitrion_id == yo.id]
+
+    pendientes_qs = InvitacionCirculo.objects.filter(
+        circulo__anfitrion=yo,
+        estado='PENDIENTE'
+    ).select_related('circulo')
+
+    pendientes_por_usuario = {}
+    for inv in pendientes_qs:
+        pendientes_por_usuario.setdefault(inv.invitado_id, []).append(inv.circulo)
+
+    for atleta in pagina:
+        compartidos = [
+            c for c in mis_circulos
+            if any(m.id == atleta.id for m in c.miembros.all())
+        ]
+        pendientes = pendientes_por_usuario.get(atleta.id, [])
+        ids_ocupados = {c.id for c in compartidos} | {c.id for c in pendientes}
+        invitables = [c for c in mis_circulos_anfitrion if c.id not in ids_ocupados]
+
+        atleta.circulos_compartidos = compartidos
+        atleta.invitaciones_pendientes = pendientes
+        atleta.circulos_invitables = invitables
 
     return render(request, 'usuarios/lista.html', {
         'atletas': pagina,

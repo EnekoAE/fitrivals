@@ -3,20 +3,27 @@
 {% block title %}{{ usuario.nombre }} | Fit Rivals{% endblock %}
 
 {% block content %}
-    <div class="hero-card">
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
-            <div>
-                <span class="badge-orange">Perfil de atleta</span>
-                <h1>{{ usuario.nombre }}</h1>
-                <div class="meta-datos">
-                    {% if es_mi_perfil %}
-                        <span><strong>Email:</strong> {{ usuario.email }}</span>
-                    {% endif %}
-                    <span><strong>Miembro desde:</strong> {{ usuario.fecha_alta }}</span>
-                    {% if es_mi_perfil or comparten_circulo %}
-                        <span><strong>Puntos:</strong> {{ usuario.puntos }} pts</span>
-                    {% endif %}
-                    <span><strong>Círculos:</strong> {{ mis_circulos_usuario|length }}</span>
+    <div class="hero-card" style="margin-bottom: 2rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 1.15rem; flex-wrap: wrap;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background-color: var(--strava-orange-soft); color: var(--strava-orange); border: 2px solid rgba(252, 82, 0, 0.3); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.35rem; flex-shrink: 0;">
+                    {{ usuario.nombre|slice:":2"|upper }}
+                </div>
+                <div>
+                    <span class="badge-orange" style="margin-bottom: 0.4rem;">
+                        {% if es_mi_perfil %}Mi perfil{% else %}Perfil de atleta{% endif %}
+                    </span>
+                    <h1 style="margin-bottom: 0.35rem;">{{ usuario.nombre }}</h1>
+                    <div class="meta-datos" style="margin: 0;">
+                        {% if es_mi_perfil %}
+                            <span><strong>Email:</strong> {{ usuario.email }}</span>
+                        {% endif %}
+                        <span><strong>Miembro desde:</strong> {{ usuario.fecha_alta|date:"j \d\e F \d\e Y" }}</span>
+                        {% if es_mi_perfil or comparten_circulo %}
+                            <span><strong>Puntos:</strong> <span class="points-badge">{{ usuario.puntos }} pts</span></span>
+                        {% endif %}
+                        <span><strong>Círculos:</strong> {{ mis_circulos_usuario|length }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -25,7 +32,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="invitado_id" value="{{ usuario.pk }}">
                     <input type="hidden" name="next" value="{% url 'detalle_usuario' usuario.pk %}">
-                    <select name="circulo_id" style="padding: 0.55rem; border-radius: 6px; border: 1px solid #ccc;">
+                    <select name="circulo_id" style="padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid var(--border-strong); font-family: inherit; background: #fff;">
                         {% for c in circulos_para_invitar %}
                             <option value="{{ c.pk }}">{{ c.nombre }}</option>
                         {% endfor %}
@@ -65,7 +72,7 @@
 
     {% if es_mi_perfil %}
         <div class="section-header">
-            <h2>Mis Círculos</h2>
+            <h2 style="margin-bottom: 0;">Mis Círculos</h2>
             <a href="{% url 'crear_circulo' %}" class="btn-primary-strava">+ Crear círculo</a>
         </div>
         <div class="dashboard-grid" style="margin-bottom: 2rem;">
@@ -84,7 +91,7 @@
                 </div>
             {% empty %}
                 <div class="info-card">
-                    <p>Aún no estás en ningún círculo.</p>
+                    <p style="margin: 0;">Aún no estás en ningún círculo.</p>
                 </div>
             {% endfor %}
         </div>
@@ -96,22 +103,25 @@
             {% for entrenamiento in entrenamientos %}
                 <div class="info-card">
                     <div>
-                        {% if entrenamiento.reto %}
-                            <span class="badge-orange">Reto: {{ entrenamiento.reto.nombre }}</span>
-                        {% else %}
-                            <span class="points-badge">Entrenamiento libre</span>
-                        {% endif %}
-                        <p><strong>Fecha:</strong> {{ entrenamiento.fecha }} ({{ entrenamiento.duracion_minutos }} min)</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                            {% if entrenamiento.reto %}
+                                <span class="badge-orange" style="margin-bottom: 0;">Reto: {{ entrenamiento.reto.nombre }}</span>
+                            {% else %}
+                                <span class="badge-orange" style="margin-bottom: 0;">Entrenamiento libre · {{ entrenamiento.duracion_minutos }} min</span>
+                            {% endif %}
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">{{ entrenamiento.fecha|date:"j \d\e F \d\e Y" }}</span>
+                        </div>
+                        <p>{{ entrenamiento.notas|default:"Sin notas adicionales." }}</p>
                     </div>
                     <a href="{% url 'detalle_entrenamiento' entrenamiento.pk %}" class="card-link">Ver detalle →</a>
                 </div>
             {% empty %}
-                <div class="info-card"><p>Este atleta aún no tiene entrenamientos registrados.</p></div>
+                <div class="info-card"><p style="margin: 0;">Este atleta aún no tiene entrenamientos registrados.</p></div>
             {% endfor %}
         </div>
     {% else %}
         <div class="info-card">
-            <p>Los entrenamientos de {{ usuario.nombre }} son privados. Debéis compartir un círculo para ver su actividad.</p>
+            <p style="margin: 0;">Los entrenamientos de {{ usuario.nombre }} son privados. Debéis compartir un círculo para ver su actividad.</p>
         </div>
     {% endif %}
 
