@@ -107,6 +107,32 @@
         background: #fdecec;
         color: #b42318;
     }
+
+    #tooltip-ejercicio {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        max-width: 280px;
+        padding: 0.85rem 1rem;
+        background: #1f2937;
+        color: #ffffff;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        line-height: 1.4;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+        pointer-events: none;
+    }
+
+    #tooltip-ejercicio strong {
+        color: #fc4c02;
+    }
+
+    #tooltip-ejercicio ul {
+        margin: 0.4rem 0 0 1rem;
+        padding: 0;
+    }
+
+
 </style>
 {% endblock %}
 
@@ -161,7 +187,7 @@
 
         <div class="dashboard-grid">
             {% for ej in grupo.ejercicios %}
-            <article class="info-card ejercicio-card" data-busqueda="{{ ej.nombre|lower }} {{ ej.get_grupo_muscular_display|lower }}">
+            <article class="info-card ejercicio-card" data-info-url="{% url 'ejercicio_info' ej.pk %}" data-busqueda="{{ ej.nombre|lower }} {{ ej.get_grupo_muscular_display|lower }}">
                 <div>
                     <div class="card-top-badges">
                         <span class="badge-orange" style="margin-bottom: 0;">{{ ej.get_grupo_muscular_display }}</span>
@@ -265,6 +291,50 @@ document.addEventListener('DOMContentLoaded', function () {
     if (buscador) {
         buscador.addEventListener('input', aplicarFiltros);
     }
+});
+</script>
+<script>
+$(function () {
+    var $tip = $('<div id="tooltip-ejercicio"></div>').appendTo('body');
+    var cache = {};
+    var peticion = null;
+
+    function pintar(datos) {
+        var html = '<strong>' + $('<div>').text(datos.nombre).html() + '</strong><br>' +
+                   $('<div>').text(datos.grupo + ' · ' + datos.dificultad).html() + '<br>' +
+                   $('<div>').text(datos.descripcion).html();
+        if (datos.retos.length) {
+            html += '<ul>';
+            $.each(datos.retos, function (i, nombre) {
+                html += '<li>' + $('<div>').text(nombre).html() + '</li>';
+            });
+            html += '</ul>';
+        }
+        $tip.html(html);
+    }
+
+    $('.ejercicio-card').on('mouseenter', function () {
+        var url = $(this).data('info-url');
+        if (peticion) { peticion.abort(); }
+        $tip.html('Cargando...').stop(true, true).fadeIn(120);
+        if (cache[url]) {
+            pintar(cache[url]);
+            return;
+        }
+        peticion = $.getJSON(url)
+            .done(function (datos) {
+                cache[url] = datos;
+                pintar(datos);
+            })
+            .fail(function (xhr, estado) {
+                if (estado !== 'abort') { $tip.text('No se pudo cargar la información.'); }
+            });
+    }).on('mousemove', function (e) {
+        $tip.css({ top: e.pageY + 16, left: Math.min(e.pageX + 16, $(window).width() - 300) });
+    }).on('mouseleave', function () {
+        if (peticion) { peticion.abort(); }
+        $tip.stop(true, true).fadeOut(100);
+    });
 });
 </script>
 {% endblock %}

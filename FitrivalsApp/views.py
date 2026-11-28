@@ -15,6 +15,7 @@ from .models import (
     Ejercicio, Entrenamiento, Reto, EntrenamientoEjercicio
 )
 from .forms import RegistroUsuarioForm, LoginUsuarioForm, EntrenamientoForm, CirculoForm
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 def _entero(valor, defecto, minimo=1, maximo=10000):
@@ -387,7 +388,7 @@ def invitar_circulo(request):
         else:
             messages.success(request, f'Solicitud enviada a {atleta.nombre} para unirse a "{circulo.nombre}".')
 
-    if next_url:
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
         return redirect(next_url)
     return redirect('detalle_circulo', pk=circulo.pk)
 
@@ -453,6 +454,17 @@ def lista_ejercicios(request):
         'total_ejercicios': len(ejercicios),
     })
 
+def ejercicio_info(request, pk):
+    ejercicio = get_object_or_404(Ejercicio, pk=pk)
+    retos = list(ejercicio.retos.values_list('nombre', flat=True)[:5])
+    return JsonResponse({
+        'nombre': ejercicio.nombre,
+        'grupo': ejercicio.get_grupo_muscular_display(),
+        'dificultad': ejercicio.get_dificultad_display(),
+        'descripcion': ejercicio.descripcion or 'Sin descripción todavía.',
+        'retos': retos,
+    })
+
 
 def detalle_ejercicio(request, pk):
     ejercicio = get_object_or_404(Ejercicio, pk=pk)
@@ -468,9 +480,21 @@ def lista_entrenamientos(request):
 
 
 def detalle_entrenamiento(request, pk):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_usuario')
+
     entrenamiento = get_object_or_404(
-        Entrenamiento.objects.select_related('usuario', 'reto'), pk=pk
+        Entrenamiento.objects.select_related('usuario', 'reto').prefetch_related('entrenamientoejercicio_set__ejercicio'),
+        pk=pk,
     )
+
+    if entrenamiento.usuario_id != usuario_id:
+        comparten = Circulo.objects.filter(miembros=usuario_id).filter(miembros=entrenamiento.usuario_id).exists()
+        if not comparten:
+            messages.error(request, 'No tienes permiso para ver este entrenamiento.')
+            return redirect('lista_circulos')
+
     return render(request, 'entrenamientos/detalle.html', {'entrenamiento': entrenamiento})
 
 
